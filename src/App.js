@@ -1,15 +1,13 @@
 import React from "react";
 import Home from "./pages/Home";
 import Manga from "./pages/Manga";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
 	return (
 		<Router>
 			<Switch>
-				<Route exact path="/">
-					<Home />
-				</Route>
+				<Route exact path="/" component={Home} />
 				<Route path="/manga">
 					<Manga />
 				</Route>
