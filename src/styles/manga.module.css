@@ -1,0 +1,43 @@
+.header {
+	display: flex;
+	padding: 1em;
+}
+.header > div {
+	align-self: flex-end;
+	margin: 0 1em 1em 1em;
+}
+.manga_title {
+	font-weight: bold;
+}
+.abso {
+	position: absolute;
+	top: 0;
+	background-color: #000;
+	height: max-content;
+	width: 100%;
+}
+.abso > div {
+	margin: 2em auto;
+}
+.abso > div > div {
+	display: block;
+	width: 300px;
+}
+.abso img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+.closeButton {
+	position: fixed;
+	z-index: 999;
+	top: 0;
+	right: 50%;
+	transform: translateX(50%);
+}
+
+@media only screen and (min-width: 768px) {
+	.abso > div > div {
+		width: 700px;
+	}
+}
