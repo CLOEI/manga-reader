@@ -5,7 +5,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
 	return (
-		<Router basename="/">
+		<Router basename={process.env.PUBLIC_URL}>
 			<Switch>
 				<Route exact path="/" component={Home} />
 				<Route path="/manga" component={Manga} />
