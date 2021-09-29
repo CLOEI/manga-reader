@@ -12,6 +12,7 @@ import {
 	abso,
 	closeButton,
 } from "../styles/manga.module.css";
+import axios from "axios";
 
 function useQuery() {
 	return new URLSearchParams(useLocation().search);
@@ -27,31 +28,22 @@ function Manga() {
 	useEffect(() => {
 		if (mangaID == null) return;
 
-		fetch(
-			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/manga?ids[]=${mangaID}`,
-			{
-				mode: "cors",
-			}
-		)
-			.then((res) => res.json())
-			.then((data) => {
-				const authorID = data.data[0].relationships.filter(
+		axios
+			.get(`https://api.mangadex.org/manga?ids[]=${mangaID}`)
+			.then((res) => {
+				const authorID = res.data.data[0].relationships.filter(
 					(val) => val.type === "author"
 				)[0];
 
-				if (authorID == null) throw data;
+				if (authorID == null) throw res.data;
 
-				fetch(
-					`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/author/${authorID.id}`,
-					{
-						mode: "cors",
-					}
-				)
-					.then((res) => res.json())
+				axios
+					.get(`https://api.mangadex.org/author/${authorID.id}`)
+					.then((res) => res.data)
 					.then((authorData) => {
 						setData({
-							mangaData: data,
-							tags: data.data[0].attributes.tags,
+							mangaData: res.data,
+							tags: res.data.data[0].attributes.tags,
 							authorData,
 						});
 					});
@@ -67,18 +59,19 @@ function Manga() {
 	useEffect(() => {
 		if (mangaID == null) return;
 
-		const data = fetch(
-			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/chapter?manga=${mangaID}&translatedLanguage[]=en&limit=100&order[chapter]=desc`,
-			{ mode: "cors" }
-		).then((res) => res.json());
+		const data = axios
+			.get(
+				`https://api.mangadex.org/chapter?manga=${mangaID}&translatedLanguage[]=en&limit=100&order[chapter]=desc`
+			)
+			.then((res) => res.data);
 
 		data.then((oldData) => {
 			function recursiveRequest(obj, offset) {
-				fetch(
-					`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/chapter?limit=100&offset=${offset}&manga=${mangaID}&translatedLanguage[]=en&order[chapter]=desc`,
-					{ mode: "cors" }
-				)
-					.then((res) => res.json())
+				axios
+					.get(
+						`https://api.mangadex.org/chapter?limit=100&offset=${offset}&manga=${mangaID}&translatedLanguage[]=en&order[chapter]=desc`
+					)
+					.then((res) => res.data)
 					.then((newData) => {
 						if (obj.data.length >= obj.total) {
 							setChapterData(oldData);
@@ -96,16 +89,14 @@ function Manga() {
 	}, [mangaID]);
 
 	async function chapterHandler(e, chapterID) {
-		const chapterRes = await fetch(
-			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/chapter/${chapterID}`,
-			{ mode: "cors" }
+		const chapterRes = await axios.get(
+			`https://api.mangadex.org/chapter/${chapterID}`
 		);
-		const res = await fetch(
-			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/at-home/server/${chapterID}`,
-			{ mode: "cors" }
+		const res = await axios.get(
+			`https://api.mangadex.org/at-home/server/${chapterID}`
 		);
-		const { baseUrl } = await res.json();
-		const { hash, data } = (await chapterRes.json()).data.attributes;
+		const { baseUrl } = res.data;
+		const { hash, data } = chapterRes.data.data.attributes;
 		const imgData = data.map((item) => `${baseUrl}/data/${hash}/${item}`);
 
 		setChapterImage(imgData);

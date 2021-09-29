@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { container } from "../styles/chapter.module.css";
 import { format } from "date-fns";
+import axios from "axios";
 
 function Chapter({
 	volume,
@@ -16,13 +17,9 @@ function Chapter({
 	useEffect(() => {
 		if (scanlationID === undefined) return;
 
-		fetch(
-			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/group/${scanlationID.id}`,
-			{
-				mode: "cors",
-			}
-		)
-			.then((res) => res.json())
+		axios
+			.get(`https://api.mangadex.org/group/${scanlationID.id}`)
+			.then((res) => res.data)
 			.then((data) => setScanlation(data.data.attributes.name));
 	}, [scanlationID]);
 	return (

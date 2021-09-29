@@ -1,6 +1,7 @@
 import Manga from "../components/Manga.jsx";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Home() {
 	const [title, setTitle] = useState(null);
@@ -8,17 +9,9 @@ function Home() {
 
 	useEffect(() => {
 		if (title == null) return;
-		fetch(
-			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/manga?title=${title}`,
-			{
-				mode: "cors",
-				credentials: "include",
-			}
-		)
-			.then((res) => res.json())
-			.then((data) => {
-				setMangaData(data);
-			});
+		axios.get(`https://api.mangadex.org/manga?title=${title}`).then((res) => {
+			setMangaData(res.data);
+		});
 	}, [title]);
 
 	function submitHandler(e) {
