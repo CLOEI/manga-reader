@@ -27,7 +27,9 @@ function Manga() {
 	useEffect(() => {
 		if (mangaID == null) return;
 
-		fetch(`https://api.mangadex.org/manga?ids[]=${mangaID}`)
+		fetch(`https://api.mangadex.org/manga?ids[]=${mangaID}`, {
+			mode: "cors",
+		})
 			.then((res) => res.json())
 			.then((data) => {
 				const authorID = data.data[0].relationships.filter(
@@ -36,7 +38,9 @@ function Manga() {
 
 				if (authorID == null) throw data;
 
-				fetch(`https://api.mangadex.org/author/${authorID.id}`)
+				fetch(`https://api.mangadex.org/author/${authorID.id}`, {
+					mode: "cors",
+				})
 					.then((res) => res.json())
 					.then((authorData) => {
 						setData({
@@ -58,13 +62,15 @@ function Manga() {
 		if (mangaID == null) return;
 
 		const data = fetch(
-			`https://api.mangadex.org/chapter?manga=${mangaID}&translatedLanguage[]=en&limit=100&order[chapter]=desc`
+			`https://api.mangadex.org/chapter?manga=${mangaID}&translatedLanguage[]=en&limit=100&order[chapter]=desc`,
+			{ mode: "cors" }
 		).then((res) => res.json());
 
 		data.then((oldData) => {
 			function recursiveRequest(obj, offset) {
 				fetch(
-					`https://api.mangadex.org/chapter?limit=100&offset=${offset}&manga=${mangaID}&translatedLanguage[]=en&order[chapter]=desc`
+					`https://api.mangadex.org/chapter?limit=100&offset=${offset}&manga=${mangaID}&translatedLanguage[]=en&order[chapter]=desc`,
+					{ mode: "cors" }
 				)
 					.then((res) => res.json())
 					.then((newData) => {
@@ -85,10 +91,12 @@ function Manga() {
 
 	async function chapterHandler(e, chapterID) {
 		const chapterRes = await fetch(
-			`https://api.mangadex.org/chapter/${chapterID}`
+			`https://api.mangadex.org/chapter/${chapterID}`,
+			{ mode: "cors" }
 		);
 		const res = await fetch(
-			`https://api.mangadex.org/at-home/server/${chapterID}`
+			`https://api.mangadex.org/at-home/server/${chapterID}`,
+			{ mode: "cors" }
 		);
 		const { baseUrl } = await res.json();
 		const { hash, data } = (await chapterRes.json()).data.attributes;
