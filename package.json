@@ -1,7 +1,7 @@
 {
   "name": "manga-reader",
   "version": "0.1.0",
-  "homepage": "https://github.com/CLOEI/manga-reader",
+  "homepage": "https://cloei.github.io/manga-reader",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
