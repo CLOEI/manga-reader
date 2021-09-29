@@ -4,10 +4,13 @@ function Cover({ mangaID, coverID, style, alt }) {
 	const [cover, setCover] = useState(null);
 
 	useEffect(() => {
-		fetch(`https://api.mangadex.org/cover/${coverID}`, {
-			mode: "cors",
-			credentials: "include",
-		})
+		fetch(
+			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/cover/${coverID}`,
+			{
+				mode: "cors",
+				credentials: "include",
+			}
+		)
 			.then((res) => res.json())
 			.then((data) => {
 				setCover(

@@ -8,10 +8,13 @@ function Home() {
 
 	useEffect(() => {
 		if (title == null) return;
-		fetch(`https://api.mangadex.org/manga?title=${title}`, {
-			mode: "cors",
-			credentials: "include",
-		})
+		fetch(
+			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/manga?title=${title}`,
+			{
+				mode: "cors",
+				credentials: "include",
+			}
+		)
 			.then((res) => res.json())
 			.then((data) => {
 				setMangaData(data);

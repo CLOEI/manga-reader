@@ -16,9 +16,12 @@ function Chapter({
 	useEffect(() => {
 		if (scanlationID === undefined) return;
 
-		fetch(`https://api.mangadex.org/group/${scanlationID.id}`, {
-			mode: "cors",
-		})
+		fetch(
+			`https://cors-anywhere.herokuapp.com/https://api.mangadex.org/group/${scanlationID.id}`,
+			{
+				mode: "cors",
+			}
+		)
 			.then((res) => res.json())
 			.then((data) => setScanlation(data.data.attributes.name));
 	}, [scanlationID]);
