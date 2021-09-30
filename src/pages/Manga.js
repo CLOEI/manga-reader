@@ -12,7 +12,6 @@ import {
 	abso,
 	closeButton,
 } from "../styles/manga.module.css";
-import axios from "axios";
 
 function useQuery() {
 	return new URLSearchParams(useLocation().search);
@@ -28,22 +27,21 @@ function Manga() {
 	useEffect(() => {
 		if (mangaID == null) return;
 
-		axios
-			.get(`https://api.mangadex.org/manga?ids[]=${mangaID}`)
-			.then((res) => {
-				const authorID = res.data.data[0].relationships.filter(
+		fetch(`/api/manga?ids[]=${mangaID}`)
+			.then((res) => res.json())
+			.then((data) => {
+				const authorID = data.data[0].relationships.filter(
 					(val) => val.type === "author"
 				)[0];
 
-				if (authorID == null) throw res.data;
+				if (authorID == null) throw data;
 
-				axios
-					.get(`https://api.mangadex.org/author/${authorID.id}`)
-					.then((res) => res.data)
+				fetch(`/api/author/${authorID.id}`)
+					.then((res) => res.json())
 					.then((authorData) => {
 						setData({
-							mangaData: res.data,
-							tags: res.data.data[0].attributes.tags,
+							mangaData: data,
+							tags: data.data[0].attributes.tags,
 							authorData,
 						});
 					});
@@ -59,19 +57,16 @@ function Manga() {
 	useEffect(() => {
 		if (mangaID == null) return;
 
-		const data = axios
-			.get(
-				`https://api.mangadex.org/chapter?manga=${mangaID}&translatedLanguage[]=en&limit=100&order[chapter]=desc`
-			)
-			.then((res) => res.data);
+		const data = fetch(
+			`/api/chapter?manga=${mangaID}&translatedLanguage[]=en&limit=100&order[chapter]=desc`
+		).then((res) => res.json());
 
 		data.then((oldData) => {
 			function recursiveRequest(obj, offset) {
-				axios
-					.get(
-						`https://api.mangadex.org/chapter?limit=100&offset=${offset}&manga=${mangaID}&translatedLanguage[]=en&order[chapter]=desc`
-					)
-					.then((res) => res.data)
+				fetch(
+					`/api/chapter?limit=100&offset=${offset}&manga=${mangaID}&translatedLanguage[]=en&order[chapter]=desc`
+				)
+					.then((res) => res.json())
 					.then((newData) => {
 						if (obj.data.length >= obj.total) {
 							setChapterData(oldData);
@@ -89,14 +84,10 @@ function Manga() {
 	}, [mangaID]);
 
 	async function chapterHandler(e, chapterID) {
-		const chapterRes = await axios.get(
-			`https://api.mangadex.org/chapter/${chapterID}`
-		);
-		const res = await axios.get(
-			`https://api.mangadex.org/at-home/server/${chapterID}`
-		);
-		const { baseUrl } = res.data;
-		const { hash, data } = chapterRes.data.data.attributes;
+		const chapterRes = await fetch(`/api/chapter/${chapterID}`);
+		const res = await fetch(`/api/at-home/server/${chapterID}`);
+		const { baseUrl } = await res.json();
+		const { hash, data } = (await chapterRes.json()).data.attributes;
 		const imgData = data.map((item) => `${baseUrl}/data/${hash}/${item}`);
 
 		setChapterImage(imgData);
@@ -211,7 +202,7 @@ function Manga() {
 				: "Whatcha lookin for?"}
 			{chapterImage && (
 				<div className={abso}>
-					<TransformWrapper panning={{ disabled: true }}>
+					<TransformWrapper>
 						<TransformComponent wrapperClass={chapter_container}>
 							{chapterImage.map((url, i) => {
 								return <img src={url} alt="" key={i} />;

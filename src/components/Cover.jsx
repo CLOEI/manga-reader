@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 function Cover({ mangaID, coverID, style, alt }) {
 	const [cover, setCover] = useState(null);
 
 	useEffect(() => {
-		axios
-			.get(`https://api.mangadex.org/cover/${coverID}`)
-			.then((res) => res.data)
+		fetch(`/api/cover/${coverID}`)
+			.then((res) => res.json())
 			.then((data) => {
 				setCover(
 					`https://uploads.mangadex.org/covers/${mangaID}/${data.data.attributes.fileName}.256.jpg`

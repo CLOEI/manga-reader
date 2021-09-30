@@ -1,7 +1,6 @@
 import Manga from "../components/Manga.jsx";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 function Home() {
 	const [title, setTitle] = useState(null);
@@ -9,9 +8,11 @@ function Home() {
 
 	useEffect(() => {
 		if (title == null) return;
-		axios.get(`https://api.mangadex.org/manga?title=${title}`).then((res) => {
-			setMangaData(res.data);
-		});
+		fetch(`/api/manga?title=${title}`)
+			.then((res) => res.json())
+			.then((data) => {
+				setMangaData(data);
+			});
 	}, [title]);
 
 	function submitHandler(e) {
@@ -22,7 +23,7 @@ function Home() {
 	return (
 		<div>
 			<header className="header-container">
-				<h1>漫画</h1>
+				<h1>マンガ</h1>
 				<p>( Manga )</p>
 				<form onSubmit={submitHandler}>
 					<div className="search-box">

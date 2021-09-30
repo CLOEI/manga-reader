@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { container } from "../styles/chapter.module.css";
 import { format } from "date-fns";
-import axios from "axios";
 
 function Chapter({
 	volume,
@@ -17,9 +16,8 @@ function Chapter({
 	useEffect(() => {
 		if (scanlationID === undefined) return;
 
-		axios
-			.get(`https://api.mangadex.org/group/${scanlationID.id}`)
-			.then((res) => res.data)
+		fetch(`/api/group/${scanlationID.id}`)
+			.then((res) => res.json())
 			.then((data) => setScanlation(data.data.attributes.name));
 	}, [scanlationID]);
 	return (
