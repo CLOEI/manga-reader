@@ -1,7 +1,7 @@
 {
   "name": "manga-reader",
   "version": "0.1.0",
-  "homepage": "https://cloei.github.io/manga-reader",
+  "author": "Cendy",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -20,9 +20,7 @@
     "start": "PORT=3006 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -42,7 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "gh-pages": "^3.2.3"
-  }
+  "devDependencies": {}
 }
