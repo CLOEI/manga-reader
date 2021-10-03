@@ -1,19 +1,34 @@
-import Cover from "./Cover.jsx";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import classes from "../styles/Manga.module.css";
 
-function Manga({ mangaID, coverID, title, onClick }) {
+function Manga({ mangaID, coverID, title }) {
+	const [cover, setCover] = useState(null);
+
+	useEffect(() => {
+		fetch(`/api/cover/${coverID}`)
+			.then((res) => res.json())
+			.then((data) => {
+				setCover(data);
+			});
+	}, [coverID]);
+
 	return (
-		<div
-			onClick={onClick}
-			style={{ margin: "1em 1em 0 1em", width: "130px", cursor: "pointer" }}
-		>
-			<Cover
-				mangaID={mangaID}
-				coverID={coverID}
-				style={{ width: "128px", height: "180px" }}
-				alt={title}
-			/>
-			<p>{title}</p>
-		</div>
+		<Link to={`/manga?id=${mangaID}`}>
+			<div
+				className={classes.container}
+				style={{
+					backgroundImage: `${
+						cover &&
+						`url(https://uploads.mangadex.org/covers/${mangaID}/${cover.data.attributes.fileName}.256.jpg)`
+					}`,
+					backgroundPosition: "center",
+					backgroundSize: "cover",
+				}}
+			>
+				<p>{title}</p>
+			</div>
+		</Link>
 	);
 }
 

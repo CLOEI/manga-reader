@@ -1,8 +1,9 @@
 import React from "react";
-import { container } from "../styles/tag.module.css";
+import classes from "../styles/Tag.module.css";
+
 function Tag({ name }) {
 	return (
-		<div className={container}>
+		<div className={classes.container}>
 			<p>{name}</p>
 		</div>
 	);

@@ -1,0 +1,11 @@
+.container {
+	max-width: max-content;
+	padding: 0.2em 0.5em;
+	border-radius: 12px;
+	border: 1px solid #fff;
+	margin: 0 0.2em;
+	white-space: nowrap;
+}
+.container:first-child {
+	margin: 0 0.2em 0 0;
+}

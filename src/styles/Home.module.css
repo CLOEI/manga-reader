@@ -1,0 +1,54 @@
+.container {
+	background-color: #121212;
+	min-height: 100vh;
+	max-width: 1366px;
+	color: #e1e1e1;
+}
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 1em;
+	background-color: #1f1f1f;
+	height: 60px;
+}
+.search {
+	display: flex;
+	align-items: center;
+}
+.search > input {
+	margin: 0 1em 0 0;
+}
+.search > svg {
+	cursor: pointer;
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	background-color: #1f1f1f;
+	height: 50px;
+}
+.footer > div {
+	cursor: pointer;
+}
+
+.manga_container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+	grid-gap: 5px;
+	justify-items: center;
+	padding-top: 1em;
+	padding-bottom: 4em;
+}
+
+.about_container div:first-child {
+	background-color: #1f1f1f;
+	padding: 4em 0;
+	text-align: center;
+}
