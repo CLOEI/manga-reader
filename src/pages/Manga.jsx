@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Tag from "../components/Tag";
 import classes from "../styles/MangaPage.module.css";
+import Chapter from "../components/Chapter";
 
 const NotFound = styled.div`
 	display: flex;
@@ -29,8 +30,13 @@ function useQuery() {
 function Manga() {
 	const id = useQuery().get("id");
 	const [mangaData, setMangaData] = useState(null);
+	const [favClick, setFavClick] = useState(false);
 
 	useEffect(() => {
+		const favMangas = JSON.parse(localStorage.getItem("favMangas"));
+		if (favMangas == null)
+			localStorage.setItem("favMangas", JSON.stringify([]));
+		if (id == null) return;
 		async function getData() {
 			const manga = await (await fetch(`/api/manga?ids[]=${id}`)).json();
 			const coverID = manga.data[0].relationships.filter(
@@ -39,22 +45,72 @@ function Manga() {
 			const authorID = manga.data[0].relationships.filter(
 				(val) => val.type === "author"
 			)[0].id;
-			const author = await (await fetch(`/api/author/${authorID}`)).json();
+			const author = await (
+				await fetch(`/api/author/${authorID}`).catch(() => "{}")
+			).json();
 			const cover = await (await fetch(`/api/cover/${coverID}`)).json();
 			const coverURL = `https://uploads.mangadex.org/covers/${manga.data[0].id}/${cover.data.attributes.fileName}.256.jpg`;
 			const tags = manga.data[0].attributes.tags.map(
 				(val) => val.attributes.name[Object.keys(val.attributes.name)[0]]
 			);
 
+			let chapterData = await (
+				await fetch(
+					`/api/chapter?manga=${id}&translatedLanguage[]=en&limit=100&order[chapter]=desc`
+				)
+			).json();
+
+			async function recursiveRequest(obj, offset) {
+				const newData = await (
+					await fetch(
+						`/api/chapter?limit=100&offset=${offset}&manga=${id}&translatedLanguage[]=en&order[chapter]=desc`
+					)
+				).json();
+
+				if (obj.data.length >= obj.total) {
+					chapterData = obj;
+					return;
+				} else {
+					let combinedData = [...obj.data, ...newData.data];
+					let newObj = obj;
+					newObj.data = combinedData;
+
+					recursiveRequest(newObj, offset + 100);
+				}
+			}
+			await recursiveRequest(chapterData, 100);
+
 			setMangaData({
 				mangaData: manga,
 				coverURL,
 				tags,
 				author,
+				chapterData,
 			});
 		}
 		getData();
 	}, [id]);
+
+	function chapterHandler(e, id) {}
+	function favHandler(e) {
+		const favMangas = JSON.parse(localStorage.getItem("favMangas"));
+		if (favMangas.includes(id)) {
+			localStorage.setItem(
+				"favMangas",
+				JSON.stringify(favMangas.filter((val) => val !== id))
+			);
+		} else {
+			favMangas.push(id);
+			localStorage.setItem("favMangas", JSON.stringify(favMangas));
+		}
+
+		setFavClick(!favClick);
+	}
+
+	function isFav(id) {
+		const favMangas = JSON.parse(localStorage.getItem("favMangas"));
+		return favMangas.includes(id);
+	}
 
 	return (
 		<div className={container}>
@@ -91,14 +147,16 @@ function Manga() {
 													]
 												}
 											</h2>
-											<p>{mangaData.author.data.attributes.name}</p>
+											<p>{mangaData.author.data?.attributes.name}</p>
 										</div>
 									</div>
 								</div>
 								<div className={classes.info} style={{ margin: "1em 1em" }}>
 									<div style={{ padding: "1em 0" }}>
-										<div>
-											<HeartIcon />
+										<div onClick={favHandler}>
+											<HeartIcon
+												style={{ fill: `${isFav(id) ? "red" : ""}` }}
+											/>
 											<p>Add to Library</p>
 										</div>
 									</div>
@@ -118,12 +176,42 @@ function Manga() {
 									</div>
 								</div>
 							</div>
+							<div>
+								<h3 style={{ padding: "0 1em 0.5em 1rem" }}>
+									{mangaData.chapterData.total} Chapter
+								</h3>
+								{mangaData.chapterData.data.map((val, i) => {
+									return (
+										<Chapter
+											key={i}
+											chapterID={val.id}
+											volume={val.attributes.volume}
+											chapter={val.attributes.chapter}
+											title={val.attributes.title}
+											date={val.attributes.publishAt}
+											scanlationID={
+												val.relationships.filter(
+													(val) => val.type === "scanlation_group"
+												)[0]
+											}
+											onClick={chapterHandler}
+										/>
+									);
+								})}
+							</div>
 						</div>
 					)
 				) : (
 					<NotFound>
 						<h2>~(˘▾˘~)</h2>
 						<p>Seems like something went wrong!</p>
+					</NotFound>
+				)}
+
+				{id && !mangaData && (
+					<NotFound>
+						<h2>彡໒(⊙ᴗ⊙)७彡</h2>
+						<p>Loading...</p>
 					</NotFound>
 				)}
 			</main>

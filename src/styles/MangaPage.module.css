@@ -11,7 +11,6 @@
 	box-shadow: -1px -60px 188px -31px rgba(0, 0, 0, 0.75) inset;
 	-webkit-box-shadow: -1px -60px 188px -31px rgba(0, 0, 0, 0.75) inset;
 	-moz-box-shadow: -1px -60px 188px -31px rgba(0, 0, 0, 0.75) inset;
-
 	filter: blur(2px);
 }
 .header_items {
@@ -31,14 +30,19 @@
 	height: 180px;
 	border-radius: 4px;
 }
-.header_items > p {
+.header_items > div {
+	color: #fff;
 	text-shadow: 0px 0px 30px rgba(150, 150, 150, 1);
 }
+
 .info > div > div {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	cursor: pointer;
+}
+.info p {
+	word-break: break-all;
 }
 .info svg {
 	width: 40px;

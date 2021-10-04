@@ -6,11 +6,17 @@ function Manga({ mangaID, coverID, title }) {
 	const [cover, setCover] = useState(null);
 
 	useEffect(() => {
-		fetch(`/api/cover/${coverID}`)
+		const abortCont = new AbortController();
+
+		fetch(`/api/cover/${coverID}`, { signal: abortCont.signal })
 			.then((res) => res.json())
 			.then((data) => {
 				setCover(data);
+			})
+			.catch((err) => {
+				if (err.name === "AbortError") return;
 			});
+		return () => abortCont.abort();
 	}, [coverID]);
 
 	return (
