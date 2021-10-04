@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ReactComponent as SearchIcon } from "../assets/search.svg";
 import { ReactComponent as DotsIcon } from "../assets/dots.svg";
+import { ReactComponent as TrashIcon } from "../assets/trash.svg";
 import classes from "../styles/Home.module.css";
 import styled from "styled-components";
 import Manga from "../components/Manga";
@@ -29,8 +30,8 @@ function Home() {
 	useEffect(() => {
 		const data = localStorage.getItem("favMangas");
 		if (data == null) {
-			localStorage.setItem("favMangas", JSON.stringify([]));
-		} else {
+			localStorage.setItem("favMangas", "[]");
+		} else if (JSON.parse(data).length > 0) {
 			let query = ""; // if found other better way might want to change this.
 			if (JSON.parse(data).length > 1) {
 				for (let x = 1; x < JSON.parse(data).length; x++) {
@@ -56,6 +57,11 @@ function Home() {
 			).json();
 			setMangaData(data);
 		}
+	}
+
+	function deleteStorage() {
+		localStorage.setItem("favMangas", "[]");
+		setFavManga(null);
 	}
 
 	return (
@@ -99,15 +105,15 @@ function Home() {
 									);
 								})}
 							</div>
-						) : localStorage.getItem("favMangas") == null ? (
-							<NotFound>
-								<h2>( ˘︹˘ )</h2>
-								<p>No favourites yet..</p>
-							</NotFound>
-						) : (
+						) : JSON.parse(localStorage.getItem("favMangas"))?.length > 0 ? (
 							<NotFound>
 								<h2>╰(°∇≦*)╮</h2>
 								<p>Adding ur fav!</p>
+							</NotFound>
+						) : (
+							<NotFound>
+								<h2>( ˘︹˘ )</h2>
+								<p>No favourites yet..</p>
 							</NotFound>
 						)}
 					</div>
@@ -139,6 +145,12 @@ function Home() {
 						<div>
 							<h2>まんが</h2>
 							<p>( Manga )</p>
+						</div>
+						<div>
+							<div onClick={deleteStorage}>
+								<TrashIcon />
+								<p>Delete library</p>
+							</div>
 						</div>
 					</div>
 				)}

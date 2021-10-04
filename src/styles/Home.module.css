@@ -56,10 +56,24 @@
 	padding: 1em 1em 4em 1em;
 }
 
-.about_container div:first-child {
+.about_container > div:first-child {
 	background-color: #1f1f1f;
 	padding: 4em 0;
 	text-align: center;
+}
+.about_container > div:last-child {
+	padding: 1em;
+}
+.about_container > div:last-child > div {
+	display: flex;
+	align-items: center;
+	width: max-content;
+	cursor: pointer;
+}
+.about_container > div:last-child > div > p {
+	display: flex;
+	align-items: center;
+	padding: 0 0.5em;
 }
 
 h1 {
