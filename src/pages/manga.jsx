@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { container, header } from "../styles/Home.module.css";
-import { ReactComponent as ArrowIcon } from "../assets/arrowleft.svg";
-import { ReactComponent as HeartIcon } from "../assets/heart.svg";
-import { Link, useLocation } from "react-router-dom";
-import styled from "styled-components";
-import Tag from "../components/Tag";
-import classes from "../styles/MangaPage.module.css";
-import Chapter from "../components/Chapter";
+import { useState, useEffect } from 'react';
+import { container, header } from '../styles/Home.module.css';
+import { ReactComponent as ArrowIcon } from '../assets/arrowleft.svg';
+import { ReactComponent as HeartIcon } from '../assets/heart.svg';
+import { Link, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import Tag from '../components/Tag';
+import classes from '../styles/MangaPage.module.css';
+import Chapter from '../components/Chapter';
 
 const NotFound = styled.div`
 	display: flex;
@@ -28,25 +28,22 @@ function useQuery() {
 }
 
 function Manga() {
-	const id = useQuery().get("id");
+	const id = useQuery().get('id');
 	const [mangaData, setMangaData] = useState(null);
 	const [favClick, setFavClick] = useState(false);
 
 	useEffect(() => {
-		const favMangas = JSON.parse(localStorage.getItem("favMangas"));
-		if (favMangas == null)
-			localStorage.setItem("favMangas", JSON.stringify([]));
 		if (id == null) return;
 		async function getData() {
 			const manga = await (await fetch(`/api/manga?ids[]=${id}`)).json();
 			const coverID = manga.data[0].relationships.filter(
-				(val) => val.type === "cover_art"
+				(val) => val.type === 'cover_art'
 			)[0].id;
 			const authorID = manga.data[0].relationships.filter(
-				(val) => val.type === "author"
+				(val) => val.type === 'author'
 			)[0].id;
 			const author = await (
-				await fetch(`/api/author/${authorID}`).catch(() => "{}")
+				await fetch(`/api/author/${authorID}`).catch(() => '{}')
 			).json();
 			const cover = await (await fetch(`/api/cover/${coverID}`)).json();
 			const coverURL = `https://uploads.mangadex.org/covers/${manga.data[0].id}/${cover.data.attributes.fileName}.256.jpg`;
@@ -68,16 +65,16 @@ function Manga() {
 				).json();
 
 				if (obj.data.length >= obj.total) {
-					chapterData = obj;
 					return;
 				} else {
 					let combinedData = [...obj.data, ...newData.data];
 					let newObj = obj;
 					newObj.data = combinedData;
 
-					recursiveRequest(newObj, offset + 100);
+					await recursiveRequest(newObj, offset + 100);
 				}
 			}
+
 			await recursiveRequest(chapterData, 100);
 
 			setMangaData({
@@ -91,31 +88,48 @@ function Manga() {
 		getData();
 	}, [id]);
 
-	function chapterHandler(e, id) {}
-	function favHandler(e) {
-		const favMangas = JSON.parse(localStorage.getItem("favMangas"));
+	async function chapterHandler(e, id) {
+		const quality = localStorage.getItem('quality') || 'data';
+		const { baseUrl } = await fetch(`/api/at-home/server/${id}`).then((res) =>
+			res.json()
+		);
+		const { data, hash } = await fetch(`/api/chapter/${id}`)
+			.then((res) => res.json())
+			.then((data) => {
+				return {
+					data: data.data.attributes[quality],
+					hash: data.data.attributes.hash,
+				};
+			});
+		console.log(id);
+		data.map((item) => {
+			console.log(`${baseUrl}/${quality}/${hash}/${item}`);
+		});
+	}
+	function favHandler() {
+		const favMangas = JSON.parse(localStorage.getItem('favMangas'));
 		if (favMangas.includes(id)) {
 			localStorage.setItem(
-				"favMangas",
+				'favMangas',
 				JSON.stringify(favMangas.filter((val) => val !== id))
 			);
 		} else {
 			favMangas.push(id);
-			localStorage.setItem("favMangas", JSON.stringify(favMangas));
+			localStorage.setItem('favMangas', JSON.stringify(favMangas));
 		}
 
 		setFavClick(!favClick);
 	}
 
 	function isFav(id) {
-		const favMangas = JSON.parse(localStorage.getItem("favMangas"));
+		const favMangas = JSON.parse(localStorage.getItem('favMangas'));
 		return favMangas.includes(id);
 	}
 
 	return (
 		<div className={container}>
 			<div className={header}>
-				<Link to="/" style={{ color: "inherit" }}>
+				<Link to="/" style={{ color: 'inherit' }}>
 					<ArrowIcon />
 				</Link>
 			</div>
@@ -129,10 +143,10 @@ function Manga() {
 										className={classes.header_background}
 										style={{
 											backgroundImage: `url(${mangaData.coverURL})`,
-											height: "200px",
-											backgroundRepeat: "no-repeat",
-											backgroundSize: "cover",
-											backgroundPosition: "0 10%",
+											height: '200px',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: 'cover',
+											backgroundPosition: '0 10%',
 										}}
 									></div>
 									<div className={classes.header_items}>
@@ -141,9 +155,7 @@ function Manga() {
 											<h2>
 												{
 													mangaData.mangaData.data[0].attributes.title[
-														Object.keys(
-															mangaData.mangaData.data[0].attributes.title
-														)[0]
+														Object.keys(mangaData.mangaData.data[0].attributes.title)[0]
 													]
 												}
 											</h2>
@@ -151,21 +163,17 @@ function Manga() {
 										</div>
 									</div>
 								</div>
-								<div className={classes.info} style={{ margin: "1em 1em" }}>
-									<div style={{ padding: "1em 0" }}>
+								<div className={classes.info} style={{ margin: '1em 1em' }}>
+									<div style={{ padding: '1em 0' }}>
 										<div onClick={favHandler}>
-											<HeartIcon
-												style={{ fill: `${isFav(id) ? "red" : ""}` }}
-											/>
+											<HeartIcon style={{ fill: `${isFav(id) ? 'red' : ''}` }} />
 											<p>Add to Library</p>
 										</div>
 									</div>
 									<p>
 										{
 											mangaData.mangaData.data[0].attributes.description[
-												Object.keys(
-													mangaData.mangaData.data[0].attributes.description
-												)[0]
+												Object.keys(mangaData.mangaData.data[0].attributes.description)[0]
 											]
 										}
 									</p>
@@ -177,10 +185,10 @@ function Manga() {
 								</div>
 							</div>
 							<div>
-								<h3 style={{ padding: "0 1em 0.5em 1rem" }}>
+								<h3 style={{ padding: '0 1em 0.5em 1rem' }}>
 									{mangaData.chapterData.total} Chapter
 								</h3>
-								{mangaData.chapterData.data.map((val, i) => {
+								{mangaData.chapterData.data.map((val, i, arr) => {
 									return (
 										<Chapter
 											key={i}
@@ -191,10 +199,10 @@ function Manga() {
 											date={val.attributes.publishAt}
 											scanlationID={
 												val.relationships.filter(
-													(val) => val.type === "scanlation_group"
+													(val) => val.type === 'scanlation_group'
 												)[0]
 											}
-											onClick={chapterHandler}
+											onClick={(e) => chapterHandler(e, val.id)}
 										/>
 									);
 								})}
