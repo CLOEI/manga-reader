@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { container, header } from '../styles/Home.module.css';
 import { ReactComponent as ArrowIcon } from '../assets/arrowleft.svg';
+import { ReactComponent as LeftIcon } from '../assets/left.svg';
+import { ReactComponent as RightIcon } from '../assets/right.svg';
 import { ReactComponent as HeartIcon } from '../assets/heart.svg';
+import QuickPinchZoom, { make3dTransformValue } from 'react-quick-pinch-zoom';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Tag from '../components/Tag';
@@ -31,22 +34,39 @@ function Manga() {
 	const id = useQuery().get('id');
 	const [mangaData, setMangaData] = useState(null);
 	const [favClick, setFavClick] = useState(false);
+	const [chapterData, setChapterData] = useState(null);
+	const [currentNumber, setCurrentNumber] = useState(0);
+	const imgRef = useRef();
+	const onUpdate = useCallback(({ x, y, scale }) => {
+		const { current: img } = imgRef;
+
+		if (img) {
+			const value = make3dTransformValue({ x, y, scale });
+
+			img.style.setProperty('transform', value);
+		}
+	}, []);
 
 	useEffect(() => {
 		if (id == null) return;
 		async function getData() {
-			const manga = await (await fetch(`/api/manga?ids[]=${id}`)).json();
+			const manga = await fetch(`/api/manga?ids[]=${id}`).then((res) =>
+				res.json()
+			);
+
 			const coverID = manga.data[0].relationships.filter(
 				(val) => val.type === 'cover_art'
 			)[0].id;
 			const authorID = manga.data[0].relationships.filter(
 				(val) => val.type === 'author'
 			)[0].id;
-			const author = await (
-				await fetch(`/api/author/${authorID}`).catch(() => '{}')
-			).json();
-			const cover = await (await fetch(`/api/cover/${coverID}`)).json();
+
+			const author = await fetch(`/api/author/${authorID}`)
+				.then((res) => res.json())
+				.catch(() => '{}');
+			const cover = await fetch(`/api/cover/${coverID}`).then((res) => res.json());
 			const coverURL = `https://uploads.mangadex.org/covers/${manga.data[0].id}/${cover.data.attributes.fileName}.256.jpg`;
+
 			const tags = manga.data[0].attributes.tags.map(
 				(val) => val.attributes.name[Object.keys(val.attributes.name)[0]]
 			);
@@ -101,11 +121,13 @@ function Manga() {
 					hash: data.data.attributes.hash,
 				};
 			});
-		console.log(id);
-		data.map((item) => {
-			console.log(`${baseUrl}/${quality}/${hash}/${item}`);
+		// seems like sometime chapter data is empty.
+		setChapterData(data.map((item) => `${baseUrl}/${quality}/${hash}/${item}`));
+		window.scrollTo({
+			top: 0,
 		});
 	}
+
 	function favHandler() {
 		const favMangas = JSON.parse(localStorage.getItem('favMangas'));
 		if (favMangas.includes(id)) {
@@ -126,6 +148,23 @@ function Manga() {
 		return favMangas.includes(id);
 	}
 
+	function leftHandler() {
+		if (currentNumber !== chapterData.length) {
+			setCurrentNumber((pre) => pre + 1);
+		}
+	}
+
+	function rightHandler() {
+		if (currentNumber !== 0) {
+			setCurrentNumber((pre) => pre - 1);
+		}
+	}
+
+	function closeChapter() {
+		setChapterData(null);
+		setCurrentNumber(0);
+	}
+
 	return (
 		<div className={container}>
 			<div className={header}>
@@ -135,7 +174,8 @@ function Manga() {
 			</div>
 			<main>
 				{id ? (
-					mangaData && (
+					mangaData &&
+					!chapterData && (
 						<div>
 							<div>
 								<div className={classes.header}>
@@ -221,6 +261,36 @@ function Manga() {
 						<h2>彡໒(⊙ᴗ⊙)७彡</h2>
 						<p>Loading...</p>
 					</NotFound>
+				)}
+				{chapterData && (
+					<div
+						style={{
+							position: 'absolute',
+							backgroundColor: '#121212',
+							top: '0',
+							right: '0',
+							left: '0',
+							bottom: '0',
+							height: window.innerHeight,
+						}}
+					>
+						<QuickPinchZoom onUpdate={onUpdate} draggableUnZoomed={false}>
+							<img
+								ref={imgRef}
+								src={chapterData[currentNumber]}
+								alt="manga"
+								className={classes.manga}
+							/>
+						</QuickPinchZoom>
+						<div className={classes.chapter_info}>
+							<LeftIcon onClick={leftHandler} />
+							<p>
+								{currentNumber + 1}/{chapterData.length}
+							</p>
+							<RightIcon onClick={rightHandler} />
+							<button onClick={closeChapter}>Close</button>
+						</div>
+					</div>
 				)}
 			</main>
 		</div>
