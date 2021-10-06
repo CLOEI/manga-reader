@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export default function useSearch(name, data) {
 	const [favMangas, setFavMangas] = useState(null);
@@ -6,7 +6,7 @@ export default function useSearch(name, data) {
 	useEffect(() => {
 		const abortCont = new AbortController();
 		if (data) {
-			let query = "";
+			let query = '';
 			if (data.length > 1) {
 				for (let x = 1; x < data.length; x++) {
 					query += `&ids[]=${data[x]}`;
@@ -16,19 +16,19 @@ export default function useSearch(name, data) {
 				.then((res) => res.json())
 				.then((data) => {
 					const newData = data.data.filter((val) => {
-						const title =
-							val.attributes.title[Object.keys(val.attributes.title)[0]];
+						const title = val.attributes.title[Object.keys(val.attributes.title)[0]];
 						return title.toLowerCase().includes(name.toLowerCase());
 					});
 					data.data = newData;
 					setFavMangas(data);
 				})
 				.catch((err) => {
-					if (err.name === "AbortError") return;
+					if (err.name === 'AbortError') return;
 				});
 		}
 
 		return () => abortCont.abort();
-	}, [name, data]);
+	}, [name]);
+
 	return favMangas;
 }

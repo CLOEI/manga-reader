@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { ReactComponent as SearchIcon } from "../assets/search.svg";
-import Layout from "../components/Layout";
-import classes from "../styles/Home.module.css";
-import styled from "styled-components";
-import Manga from "../components/Manga";
-import useSearch from "../hooks/useSearch";
+import { useState } from 'react';
+import { ReactComponent as SearchIcon } from '../assets/search.svg';
+import Layout from '../components/Layout';
+import classes from '../styles/Home.module.css';
+import styled from 'styled-components';
+import Manga from '../components/Manga';
+import useSearch from '../hooks/useSearch';
 
 const NotFound = styled.div`
 	display: flex;
@@ -23,10 +23,10 @@ const NotFound = styled.div`
 
 function Home() {
 	const [searchToggled, setSearchToggled] = useState(false);
-	const [name, setName] = useState("");
+	const [name, setName] = useState('');
 	const favManga = useSearch(
 		name,
-		JSON.parse(localStorage.getItem("favMangas"))
+		JSON.parse(localStorage.getItem('favMangas'))
 	);
 
 	function searchHandler(e) {
@@ -43,7 +43,7 @@ function Home() {
 							type="text"
 							name="title"
 							placeholder="Input name here"
-							style={{ display: `${searchToggled ? "inline-block" : "none"}` }}
+							style={{ display: `${searchToggled ? 'inline-block' : 'none'}` }}
 							onChange={searchHandler}
 						/>
 					</form>
@@ -56,23 +56,19 @@ function Home() {
 						<div className={classes.fav_container}>
 							{favManga.data.map((item, i) => {
 								const coverID = item.relationships.filter(
-									(val) => val.type === "cover_art"
+									(val) => val.type === 'cover_art'
 								)[0].id;
 								return (
 									<Manga
 										mangaID={item.id}
 										coverID={coverID}
-										title={
-											item.attributes.title[
-												Object.keys(item.attributes.title)[0]
-											]
-										}
+										title={item.attributes.title[Object.keys(item.attributes.title)[0]]}
 										key={i}
 									/>
 								);
 							})}
 						</div>
-					) : JSON.parse(localStorage.getItem("favMangas"))?.length > 0 ? (
+					) : JSON.parse(localStorage.getItem('favMangas'))?.length > 0 ? (
 						<NotFound>
 							<h2>╰(°∇≦*)╮</h2>
 							<p>Adding ur fav!</p>
