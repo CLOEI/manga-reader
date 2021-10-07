@@ -1,34 +1,40 @@
 import { useState, useEffect } from 'react';
+import axios, { CancelToken } from 'axios';
 
 export default function useSearch(name, data) {
-	const [favMangas, setFavMangas] = useState(null);
+  const [favMangas, setFavMangas] = useState(null);
 
-	useEffect(() => {
-		const abortCont = new AbortController();
-		if (data) {
-			let query = '';
-			if (data.length > 1) {
-				for (let x = 1; x < data.length; x++) {
-					query += `&ids[]=${data[x]}`;
-				}
-			}
-			fetch(`/api/manga?ids[]=${data[0]}${query}`, { signal: abortCont.signal })
-				.then((res) => res.json())
-				.then((data) => {
-					const newData = data.data.filter((val) => {
-						const title = val.attributes.title[Object.keys(val.attributes.title)[0]];
-						return title.toLowerCase().includes(name.toLowerCase());
-					});
-					data.data = newData;
-					setFavMangas(data);
-				})
-				.catch((err) => {
-					if (err.name === 'AbortError') return;
-				});
-		}
+  useEffect(() => {
+    let cancel;
+    if (data) {
+      const params = new URLSearchParams();
+      for (let item of data) {
+        params.append('ids[]', item);
+      }
 
-		return () => abortCont.abort();
-	}, [name]);
+      axios({
+        url: `/api/manga`,
+        method: 'GET',
+        params: params,
+        cancelToken: new CancelToken((c) => (cancel = c)),
+        responseType: 'json',
+      })
+        .then(({ data }) => {
+          const newData = data.data.filter((val) => {
+            const title =
+              val.attributes.title[Object.keys(val.attributes.title)[0]];
+            return title.toLowerCase().includes(name.toLowerCase());
+          });
+          data.data = newData;
+          setFavMangas(data);
+        })
+        .catch((e) => {
+          if (axios.isCancel(e)) return;
+        });
+    }
 
-	return favMangas;
+    return () => cancel();
+  }, [name, data]);
+
+  return favMangas;
 }
