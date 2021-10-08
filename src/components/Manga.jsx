@@ -36,13 +36,14 @@ function Manga({ mangaID, coverID, title }) {
           cover &&
           `https://uploads.mangadex.org/covers/${mangaID}/${cover.data.attributes.fileName}.256.jpg`
         }
-        width="145px"
-        height="200px"
+        width="165px"
+        height="220px"
         placeholder={<Loader />}
         style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          outline: 'none',
         }}
       />
       <p>{title}</p>

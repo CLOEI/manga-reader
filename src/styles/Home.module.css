@@ -43,7 +43,7 @@
 
 .manga_container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
   grid-gap: 4px;
   justify-items: center;
   padding: 11px 11px 4em 11px;

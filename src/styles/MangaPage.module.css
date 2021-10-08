@@ -79,7 +79,7 @@
 
 .loading {
   position: fixed;
-  top: 10px;
+  top: 30px;
   right: 50%;
   transform: translateX(50%);
   background-color: #121212;

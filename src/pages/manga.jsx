@@ -36,7 +36,6 @@ function Manga() {
   const history = useHistory();
   const state = useLocation().state;
   const id = useQuery().get('id');
-  const read = useQuery().has('read');
   const { mangaData, coverURL, tags, author, chapterList, isLoading } =
     useAPI(id);
   const [favClick, setFavClick] = useState(false);
@@ -67,7 +66,6 @@ function Manga() {
       });
     // seems like sometime chapter data is empty.
     setChapterData(data.map((item) => `${baseUrl}/${quality}/${hash}/${item}`));
-    history.replace(`/manga?id=${id}&read`);
     window.scrollTo({
       top: 0,
     });
@@ -108,13 +106,12 @@ function Manga() {
   function closeChapter() {
     setChapterData(null);
     setCurrentNumber(0);
-    history.replace(`/manga?id=${id}`);
   }
 
   return (
     <div className={container}>
-      <div className={header} onClick={() => history.goBack()}>
-        <ArrowIcon />
+      <div className={header}>
+        <ArrowIcon onClick={() => history.goBack()} />
       </div>
       <main>
         {id ? (
@@ -169,7 +166,7 @@ function Manga() {
                 </div>
               </div>
             </div>
-            <div style={{ display: `${read ? 'none' : 'block'}` }}>
+            <div style={{ display: `${chapterData ? 'none' : 'block'}` }}>
               <h3 style={{ padding: '0 1em 0.5em 1rem' }}>
                 {chapterList?.total || 0} Chapter
               </h3>
