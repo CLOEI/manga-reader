@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import Manga from '../components/Manga';
 import classes from '../styles/Home.module.css';
 import styled from 'styled-components';
+import axios, { CancelToken } from 'axios';
 
 const NotFound = styled.div`
   display: flex;
@@ -26,12 +27,20 @@ function Discover() {
   const [mangaData, setMangaData] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/manga?limit=100`)
-      .then((res) => res.json())
-      .then((data) => {
+    let cancel;
+    axios
+      .get(`/api/manga?limit=100`, {
+        cancelToken: new CancelToken((c) => (cancel = c)),
+      })
+      .then(({ data }) => {
         setMangaData(data);
         setisLoading(false);
+      })
+      .catch((e) => {
+        if (axios.isCancel(e)) return;
       });
+
+    return () => cancel();
   }, []);
 
   async function searchHandler(e) {

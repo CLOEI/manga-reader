@@ -1,7 +1,9 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import classes from '../styles/Home.module.css';
+import InstallPWA from '../components/InstallPWA';
 import { ReactComponent as TrashIcon } from '../assets/trash.svg';
+import { ReactComponent as DownloadIcon } from '../assets/download.svg';
 
 function About() {
   function deleteStorage() {
@@ -24,6 +26,10 @@ function About() {
               <TrashIcon />
               <p>Delete library</p>
             </div>
+            <InstallPWA>
+              <DownloadIcon />
+              <p>Install</p>
+            </InstallPWA>
           </div>
         </div>
       </main>

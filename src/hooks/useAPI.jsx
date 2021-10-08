@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import axios, { CancelToken } from 'axios';
 
-export default function useMangaData(id) {
+export default function useAPI(id, title) {
   const [data, setData] = useState({
     mangaData: null,
     coverURL: '',
     tags: [],
     author: '',
-    chapterList: [],
+    chapterList: null,
+    isLoading: true,
   });
 
   useEffect(() => {
@@ -21,6 +22,10 @@ export default function useMangaData(id) {
             cancelToken: source.token,
           })
           .then(({ data }) => data);
+        const tags = manga.data[0].attributes.tags.map(
+          (val) => val.attributes.name[Object.keys(val.attributes.name)[0]]
+        );
+        setData((pre) => ({ ...pre, mangaData: manga, tags }));
 
         const coverID = manga.data[0].relationships.filter(
           (val) => val.type === 'cover_art'
@@ -35,16 +40,17 @@ export default function useMangaData(id) {
           })
           .then(({ data }) => data)
           .catch(() => '{}');
+        setData((pre) => ({ ...pre, author }));
+
         const cover = await axios
           .get(`/api/cover/${coverID}`, {
             cancelToken: source.token,
           })
           .then(({ data }) => data);
-        const coverURL = `https://uploads.mangadex.org/covers/${manga.data[0].id}/${cover.data.attributes.fileName}.256.jpg`;
-
-        const tags = manga.data[0].attributes.tags.map(
-          (val) => val.attributes.name[Object.keys(val.attributes.name)[0]]
-        );
+        setData((pre) => ({
+          ...pre,
+          coverURL: `https://uploads.mangadex.org/covers/${manga.data[0].id}/${cover.data.attributes.fileName}.256.jpg`,
+        }));
 
         let chapterList = await axios
           .get(
@@ -78,13 +84,7 @@ export default function useMangaData(id) {
 
         await recursiveRequest(chapterList, 100);
 
-        setData({
-          mangaData: manga,
-          coverURL,
-          tags,
-          author,
-          chapterList,
-        });
+        setData((pre) => ({ ...pre, chapterList, isLoading: false }));
       } catch (error) {
         if (axios.isCancel(error)) return;
       }

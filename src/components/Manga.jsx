@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import axios, { CancelToken } from 'axios';
 import classes from '../styles/Manga.module.css';
+import Loader from '../components/Loader';
 
 function Manga({ mangaID, coverID, title }) {
   const [cover, setCover] = useState(null);
@@ -26,15 +27,23 @@ function Manga({ mangaID, coverID, title }) {
   }, [coverID]);
 
   return (
-    <Link to={`/manga?id=${mangaID}`} className={classes.container}>
+    <Link
+      to={{ pathname: '/manga', search: `?id=${mangaID}`, state: { title } }}
+      className={classes.container}
+    >
       <LazyLoadImage
         src={
           cover &&
           `https://uploads.mangadex.org/covers/${mangaID}/${cover.data.attributes.fileName}.256.jpg`
         }
-        width="158px"
-        height="210px"
-        effect="opacity"
+        width="145px"
+        height="200px"
+        placeholder={<Loader />}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       />
       <p>{title}</p>
     </Link>

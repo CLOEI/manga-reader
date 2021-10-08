@@ -5,8 +5,8 @@ export default function useSearch(name, data) {
   const [favMangas, setFavMangas] = useState(null);
 
   useEffect(() => {
-    let cancel;
-    if (data) {
+    let cancel = () => {};
+    if (data.length > 0) {
       const params = new URLSearchParams();
       for (let item of data) {
         params.append('ids[]', item);

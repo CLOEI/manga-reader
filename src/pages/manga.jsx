@@ -5,12 +5,13 @@ import { ReactComponent as LeftIcon } from '../assets/left.svg';
 import { ReactComponent as RightIcon } from '../assets/right.svg';
 import { ReactComponent as HeartIcon } from '../assets/heart.svg';
 import QuickPinchZoom, { make3dTransformValue } from 'react-quick-pinch-zoom';
-import useMangaData from '../hooks/useMangaData';
-import { Link, useLocation } from 'react-router-dom';
+import useAPI from '../hooks/useAPI';
+import { useLocation, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Tag from '../components/Tag';
 import classes from '../styles/MangaPage.module.css';
 import Chapter from '../components/Chapter';
+import Loader from '../components/Loader';
 
 const NotFound = styled.div`
   display: flex;
@@ -32,8 +33,12 @@ function useQuery() {
 }
 
 function Manga() {
+  const history = useHistory();
+  const state = useLocation().state;
   const id = useQuery().get('id');
-  const { mangaData, coverURL, tags, author, chapterList } = useMangaData(id);
+  const read = useQuery().has('read');
+  const { mangaData, coverURL, tags, author, chapterList, isLoading } =
+    useAPI(id);
   const [favClick, setFavClick] = useState(false);
   const [chapterData, setChapterData] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(0);
@@ -62,6 +67,7 @@ function Manga() {
       });
     // seems like sometime chapter data is empty.
     setChapterData(data.map((item) => `${baseUrl}/${quality}/${hash}/${item}`));
+    history.replace(`/manga?id=${id}&read`);
     window.scrollTo({
       top: 0,
     });
@@ -102,94 +108,91 @@ function Manga() {
   function closeChapter() {
     setChapterData(null);
     setCurrentNumber(0);
+    history.replace(`/manga?id=${id}`);
   }
 
   return (
     <div className={container}>
-      <div className={header}>
-        <Link to="/" style={{ color: 'inherit' }}>
-          <ArrowIcon />
-        </Link>
+      <div className={header} onClick={() => history.goBack()}>
+        <ArrowIcon />
       </div>
       <main>
         {id ? (
-          mangaData &&
-          !chapterData && (
+          <div>
             <div>
-              <div>
-                <div className={classes.header}>
-                  <div
-                    className={classes.header_background}
-                    style={{
-                      backgroundImage: `url(${coverURL})`,
-                      height: '200px',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: 'cover',
-                      backgroundPosition: '0 10%',
-                    }}
-                  ></div>
-                  <div className={classes.header_items}>
+              <div className={classes.header}>
+                <div
+                  className={classes.header_background}
+                  style={{
+                    backgroundImage: `url(${coverURL})`,
+                    height: '200px',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    backgroundPosition: '0 10%',
+                  }}
+                ></div>
+                <div className={classes.header_items}>
+                  {coverURL ? (
                     <img src={coverURL} alt="manga cover" />
-                    <div>
-                      <h2>
-                        {
-                          mangaData.data[0].attributes.title[
-                            Object.keys(mangaData.data[0].attributes.title)[0]
-                          ]
-                        }
-                      </h2>
-                      <p>{author.data?.attributes.name}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className={classes.info} style={{ margin: '1em 1em' }}>
-                  <div style={{ padding: '1em 0' }}>
-                    <div onClick={favHandler}>
-                      <HeartIcon
-                        style={{ fill: `${isFav(id) ? 'red' : ''}` }}
-                      />
-                      <p>Add to Library</p>
-                    </div>
-                  </div>
-                  <p>
-                    {
-                      mangaData.data[0].attributes.description[
-                        Object.keys(mangaData.data[0].attributes.description)[0]
-                      ]
-                    }
-                  </p>
-                  <div className={classes.tags_container}>
-                    {tags.map((val, i) => {
-                      return <Tag name={val} key={i} />;
-                    })}
+                  ) : (
+                    <div></div>
+                  )}
+                  <div>
+                    <h2>
+                      {state?.title ||
+                        mangaData?.data[0].attributes.title[
+                          Object.keys(mangaData.data[0].attributes.title)[0]
+                        ] ||
+                        'Loading'}
+                    </h2>
+                    <p>{author.data?.attributes.name || 'Unknown'}</p>
                   </div>
                 </div>
               </div>
-              <div>
-                <h3 style={{ padding: '0 1em 0.5em 1rem' }}>
-                  {chapterList.total} Chapter
-                </h3>
-                {chapterList.data.map((val, i, arr) => {
-                  return (
-                    <Chapter
-                      key={i}
-                      chapterID={val.id}
-                      volume={val.attributes.volume}
-                      chapter={val.attributes.chapter}
-                      title={val.attributes.title}
-                      date={val.attributes.publishAt}
-                      scanlationID={
-                        val.relationships.filter(
-                          (val) => val.type === 'scanlation_group'
-                        )[0]
-                      }
-                      onClick={(e) => chapterHandler(e, val.id)}
-                    />
-                  );
-                })}
+              <div className={classes.info} style={{ margin: '1em 1em' }}>
+                <div style={{ padding: '1em 0' }}>
+                  <div onClick={favHandler}>
+                    <HeartIcon style={{ fill: `${isFav(id) ? 'red' : ''}` }} />
+                    <p>Add to Library</p>
+                  </div>
+                </div>
+                <p>
+                  {mangaData &&
+                    mangaData.data[0].attributes.description[
+                      Object.keys(mangaData.data[0].attributes.description)[0]
+                    ]}
+                </p>
+                <div className={classes.tags_container}>
+                  {tags.map((val, i) => {
+                    return <Tag name={val} key={i} />;
+                  })}
+                </div>
               </div>
             </div>
-          )
+            <div style={{ display: `${read ? 'none' : 'block'}` }}>
+              <h3 style={{ padding: '0 1em 0.5em 1rem' }}>
+                {chapterList?.total || 0} Chapter
+              </h3>
+              {chapterList?.data.map((val, i, arr) => {
+                return (
+                  <Chapter
+                    key={i}
+                    chapterID={val.id}
+                    volume={val.attributes.volume}
+                    chapter={val.attributes.chapter}
+                    title={val.attributes.title}
+                    date={val.attributes.publishAt}
+                    scanlationID={
+                      val.relationships.filter(
+                        (val) => val.type === 'scanlation_group'
+                      )[0]
+                    }
+                    onClick={(e) => chapterHandler(e, val.id)}
+                  />
+                );
+              })}
+            </div>
+          </div>
         ) : (
           <NotFound>
             <h2>~(˘▾˘~)</h2>
@@ -197,12 +200,6 @@ function Manga() {
           </NotFound>
         )}
 
-        {id && !mangaData && (
-          <NotFound>
-            <h2>彡໒(⊙ᴗ⊙)७彡</h2>
-            <p>Loading...</p>
-          </NotFound>
-        )}
         {chapterData && (
           <div
             style={{
@@ -234,6 +231,11 @@ function Manga() {
           </div>
         )}
       </main>
+      {isLoading && (
+        <div className={classes.loading}>
+          <Loader />
+        </div>
+      )}
     </div>
   );
 }

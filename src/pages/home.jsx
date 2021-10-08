@@ -53,7 +53,7 @@ function Home() {
       <main>
         <div>
           {favManga ? (
-            <div className={classes.fav_container}>
+            <div className={classes.manga_container}>
               {favManga.data.map((item, i) => {
                 const coverID = item.relationships.filter(
                   (val) => val.type === 'cover_art'
@@ -72,7 +72,7 @@ function Home() {
                 );
               })}
             </div>
-          ) : JSON.parse(localStorage.getItem('favMangas'))?.length > 0 ? (
+          ) : favData?.length > 0 ? (
             <NotFound>
               <h2>╰(°∇≦*)╮</h2>
               <p>Adding ur fav!</p>
