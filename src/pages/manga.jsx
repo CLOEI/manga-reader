@@ -5,6 +5,7 @@ import { ReactComponent as LeftIcon } from '../assets/left.svg';
 import { ReactComponent as RightIcon } from '../assets/right.svg';
 import { ReactComponent as HeartIcon } from '../assets/heart.svg';
 import QuickPinchZoom, { make3dTransformValue } from 'react-quick-pinch-zoom';
+import { useSwipeable } from 'react-swipeable';
 import useAPI from '../hooks/useAPI';
 import { useLocation, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -42,6 +43,12 @@ function Manga() {
   const [chapterData, setChapterData] = useState(null);
   const [currentNumber, setCurrentNumber] = useState(0);
   const imgRef = useRef();
+  const handlers = useSwipeable({
+    onSwipedLeft: () => preHandler(),
+    onSwipedRight: () => nextHandler(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
   const onUpdate = useCallback(({ x, y, scale }) => {
     const { current: img } = imgRef;
 
@@ -208,6 +215,7 @@ function Manga() {
               bottom: '0',
               height: window.innerHeight,
             }}
+            {...handlers}
           >
             <QuickPinchZoom onUpdate={onUpdate} draggableUnZoomed={false}>
               <img
