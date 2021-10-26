@@ -1,0 +1,8 @@
+.chapter-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 50px;
+  height: max-content;
+  cursor: pointer;
+}

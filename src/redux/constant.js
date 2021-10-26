@@ -1,0 +1,2 @@
+export const SET_DISCOVERY_DATA = 'SET_DISCOVERY_DATA';
+export const SET_FAV_DATA = 'SET_FAV_DATA';

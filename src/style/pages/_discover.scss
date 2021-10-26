@@ -1,0 +1,29 @@
+.discover-container {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  grid-gap: 4px;
+  overflow: hidden;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 5px 3px;
+  min-height: calc(100vh - 60px);
+  .loading {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    h2 {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    p {
+      text-align: center;
+    }
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .discover-container {
+    grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  }
+}

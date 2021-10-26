@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap');
+@import '_reset';
+@import 'components/layout';
+@import 'components/header';
+@import 'components/navbar';
+@import 'components/manga';
+@import 'components/tag';
+@import 'components/chapter';
+@import 'pages/discover';
+@import 'pages/manga';
+
+h1,
+h2,
+p {
+  font-family: 'Oxygen', sans-serif;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  input {
+    display: none;
+    width: 100%;
+    background: none;
+    border: 0;
+    outline: 0;
+    padding: 0;
+    border-bottom: 1px solid black;
+  }
+}
+
+.active {
+  display: block !important;
+}
