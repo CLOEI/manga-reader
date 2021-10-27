@@ -2,7 +2,17 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 50px;
-  height: max-content;
+  height: 45px;
   cursor: pointer;
+  p {
+    font-size: 0.9rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  p:last-child {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: hsl(0, 0%, 21%);
+  }
 }
