@@ -68,6 +68,7 @@
     justify-self: center;
     cursor: pointer;
     svg {
+      fill: hsl(0, 0%, 90%);
       display: block;
       margin: 0 auto;
     }
@@ -79,8 +80,8 @@
       overflow: auto;
       width: 100%;
       display: flex;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
     }
     .manga-header-data-chapters {
       margin-top: 0.5rem;

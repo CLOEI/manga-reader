@@ -1,6 +1,6 @@
 import { useHistory, useLocation } from 'react-router';
 import { useEffect, useState } from 'react';
-import { getMangaData, getChapterData, getMangaCover } from '../API';
+import { getMangaData, getChapterData } from '../API';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import LeftIcon from '../../static/assets/svg/left.svg';

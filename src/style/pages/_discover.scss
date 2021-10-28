@@ -6,7 +6,6 @@
   overflow: hidden;
   grid-template-columns: repeat(2, 1fr);
   padding: 5px 3px;
-  min-height: calc(100vh - 60px);
   .loading {
     position: absolute;
     top: 50%;

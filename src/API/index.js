@@ -4,10 +4,7 @@ export const getMangaList = (cancelToken, params) => {
   return axios
     .get('/api/manga', {
       cancelToken: cancelToken,
-      params: {
-        'includes[]': 'cover_art',
-        ...params,
-      },
+      params: params,
       transformResponse: [
         (res) => {
           const { data } = JSON.parse(res);
