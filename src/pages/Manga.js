@@ -8,6 +8,7 @@ import HearthIcon from '../../static/assets/svg/hearth.svg';
 import Tag from '../components/Tag';
 import Chapter from '../components/Chapter';
 import axios from 'axios';
+import Readmore from '../components/Readmore';
 
 const Manga = () => {
   const [data, setData] = useState(null);
@@ -58,7 +59,7 @@ const Manga = () => {
           <p>Add to library</p>
         </div>
         <div className="manga-header-data">
-          <p>{data?.description || 'loading...'}</p>
+          <Readmore>{data?.description || 'loading...'}</Readmore>
           <div className="manga-header-data-tags">
             {data?.tags != null &&
               data.tags.map((tag, i) => {

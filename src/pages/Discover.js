@@ -75,13 +75,13 @@ const Discover = () => {
               </Link>
             );
           })}
-        {mangas == null && (
-          <div className="loading">
-            <h2>o(≧▽≦)o</h2>
-            <p>Loading...</p>
-          </div>
-        )}
       </div>
+      {!Object.keys(mangas).length > 0 && (
+        <div className="loading">
+          <h2>o(≧▽≦)o</h2>
+          <p>Loading...</p>
+        </div>
+      )}
     </Layout>
   );
 };

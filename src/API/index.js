@@ -33,7 +33,6 @@ export const getMangaList = (cancelToken, params) => {
       ],
     })
     .then((res) => res.data)
-    .then((data) => data)
     .catch((err) => {
       if (axios.isCancel(err)) return;
     });
