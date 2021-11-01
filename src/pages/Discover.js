@@ -30,10 +30,11 @@ const Discover = () => {
     params.append('limit', '100');
     params.append('includes[]', 'cover_art');
 
-    getMangaList(source.token, params).then((data) => data && setMangas(data));
+    getMangaList(source.token, params).then((data) => setMangas(data));
 
     return () => {
       source.cancel();
+      setMangas({});
     };
   }, []);
 

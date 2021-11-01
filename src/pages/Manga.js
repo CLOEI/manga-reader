@@ -1,6 +1,8 @@
 import { useHistory, useLocation } from 'react-router';
 import { useEffect, useState } from 'react';
 import { getMangaData, getChapterData } from '../API';
+import { useDispatch, useSelector } from 'react-redux';
+import { delFavData, setFavState } from '../redux/actions';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import LeftIcon from '../../static/assets/svg/left.svg';
@@ -14,6 +16,8 @@ const Manga = () => {
   const [data, setData] = useState(null);
   const id = useQuery().get('id');
   const history = useHistory();
+  const dispatch = useDispatch();
+  const { favourite } = useSelector((state) => state);
 
   useEffect(() => {
     if (id == null || !id.length > 0) return;
@@ -22,7 +26,7 @@ const Manga = () => {
       setData((pre) => ({
         ...pre,
         ...res,
-        coverURL: `https://uploads.mangadex.org/covers/${id}/${res.coverFileName}.256.jpg`,
+        coverURL: `https://uploads.mangadex.org/covers/${id}/${res?.coverFileName}.256.jpg`,
       }))
     );
 
@@ -32,8 +36,24 @@ const Manga = () => {
 
     return () => {
       source.cancel();
+      setData(null);
     };
   }, []);
+
+  const addFavHandler = () => {
+    if (data == null) return;
+    if (favourite?.mangas?.hasOwnProperty(id)) {
+      dispatch(delFavData(id));
+    } else {
+      dispatch(
+        setFavState({
+          id,
+          title: data.shortTitle,
+          coverFileName: data.coverFileName,
+        })
+      );
+    }
+  };
 
   return (
     <Layout>
@@ -54,12 +74,16 @@ const Manga = () => {
           <p>{data?.title || 'Loading'}</p>
           <p>{data?.author || 'Unknown'}</p>
         </div>
-        <div className="manga-header-add">
-          <HearthIcon />
+        <div className="manga-header-add" onClick={addFavHandler}>
+          <HearthIcon
+            style={{
+              fill: `${favourite?.mangas?.hasOwnProperty(id) ? 'red' : ''}`,
+            }}
+          />
           <p>Add to library</p>
         </div>
         <div className="manga-header-data">
-          <Readmore>{data?.description || 'loading...'}</Readmore>
+          <Readmore>{data?.description || ''}</Readmore>
           <div className="manga-header-data-tags">
             {data?.tags != null &&
               data.tags.map((tag, i) => {
@@ -81,6 +105,10 @@ const Manga = () => {
                   />
                 );
               })}
+            {data?.chapterData?.chapterList &&
+              !data.chapterData.chapterList.length > 0 && (
+                <p>Not available for current language</p>
+              )}
           </div>
         </div>
       </div>

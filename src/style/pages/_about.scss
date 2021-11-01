@@ -1,0 +1,30 @@
+.about-container {
+  .about-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: hsl(0, 0%, 100%);
+    color: hsl(0, 0%, 4%);
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    height: 130px;
+    h2 {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+  }
+  .about-option {
+    & > div {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      cursor: default;
+      width: max-content;
+      p {
+        margin-left: 16px;
+      }
+      & > div > p:last-child {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

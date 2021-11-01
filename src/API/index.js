@@ -16,7 +16,7 @@ export const getMangaList = (cancelToken, params) => {
               item.attributes.title[Object.keys(item.attributes.title)[0]];
             const coverFileName = item.relationships.filter(
               (item) => item.type === 'cover_art'
-            )[0].attributes.fileName;
+            )[0].attributes?.fileName;
             const shortTitle =
               title.length > 40 ? title.substr(0, 40) + '...' : title;
 
@@ -175,6 +175,9 @@ export const getChapterData = (cancelToken, mangaID) => {
                 chapterList: oldData.chapterList.concat(res.data),
               };
               return data(newData, offset + 100);
+            })
+            .catch((err) => {
+              if (axios.isCancel(err)) return;
             });
         };
 

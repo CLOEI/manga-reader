@@ -1,0 +1,15 @@
+.home-container {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  grid-gap: 4px;
+  overflow: hidden;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 5px 3px;
+}
+
+@media only screen and (min-width: 425px) {
+  .home-container {
+    grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  }
+}
