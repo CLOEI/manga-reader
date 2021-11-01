@@ -7,13 +7,17 @@ const Home = () => {
   const data = JSON.parse(localStorage.getItem('fav'));
 
   const isEmpty = (obj) => {
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
+    if (obj == null) return true;
+    if (!obj.mangas) return true;
+    for (let key in obj.mangas) {
+      if (obj.mangas.hasOwnProperty(key)) {
         return false;
       }
     }
-    return false;
+    return true;
   };
+
+  console.log(data);
 
   return (
     <Layout>
@@ -31,13 +35,12 @@ const Home = () => {
             );
           })}
       </div>
-      {isEmpty(data) ||
-        (!Object.keys(data?.mangas).length > 0 && (
-          <div className="loading">
-            <h2>(ᗒᗣᗕ)՞</h2>
-            <p>None in your favourite</p>
-          </div>
-        ))}
+      {isEmpty(data) && (
+        <div className="loading">
+          <h2>(ᗒᗣᗕ)՞</h2>
+          <p>None in your favourite</p>
+        </div>
+      )}
     </Layout>
   );
 };
