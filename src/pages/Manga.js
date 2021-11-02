@@ -11,6 +11,7 @@ import Tag from '../components/Tag';
 import Chapter from '../components/Chapter';
 import axios from 'axios';
 import Readmore from '../components/Readmore';
+import style from '../style/pages/manga.module.scss';
 
 const Manga = () => {
   const [data, setData] = useState(null);
@@ -60,21 +61,21 @@ const Manga = () => {
       <Header>
         <LeftIcon onClick={() => history.goBack()} />
       </Header>
-      <div className="manga-header">
+      <div className={style.container}>
         <div
-          className="manga-header-background"
+          className={style.background}
           style={{ backgroundImage: `url(${data?.coverURL})` }}
         ></div>
-        <div className="manga-header-cover">
+        <div className={style.cover}>
           <div>
             <img src={data?.coverURL} />
           </div>
         </div>
-        <div className="manga-header-info">
+        <div className={style.info}>
           <p>{data?.title || 'Loading'}</p>
           <p>{data?.author || 'Unknown'}</p>
         </div>
-        <div className="manga-header-add" onClick={addFavHandler}>
+        <div className={style.add} onClick={addFavHandler}>
           <HearthIcon
             style={{
               fill: `${favourite?.mangas?.hasOwnProperty(id) ? 'red' : ''}`,
@@ -82,16 +83,16 @@ const Manga = () => {
           />
           <p>Add to library</p>
         </div>
-        <div className="manga-header-data">
+        <div className={style.data}>
           <Readmore>{data?.description || ''}</Readmore>
-          <div className="manga-header-data-tags">
+          <div className={style.tags}>
             {data?.tags != null &&
               data.tags.map((tag, i) => {
                 return <Tag name={tag} key={i} />;
               })}
           </div>
           <p>{`${data?.chapterData?.total || 0} Chapter`}</p>
-          <div className="manga-header-data-chapters">
+          <div className={style.chapters}>
             {data?.chapterData?.chapterList != null &&
               data.chapterData.chapterList.map((chapter, i) => {
                 return (

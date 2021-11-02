@@ -1,4 +1,4 @@
-.discover-container {
+.container {
   position: relative;
   display: grid;
   justify-items: center;
@@ -13,6 +13,7 @@
   top: 50%;
   right: 50%;
   transform: translate(50%, -50%);
+  color: var(--text-color);
   h2 {
     font-size: 3rem;
     font-weight: bold;
@@ -23,7 +24,7 @@
 }
 
 @media only screen and (min-width: 425px) {
-  .discover-container {
+  .container {
     grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
   }
 }

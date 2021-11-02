@@ -3,6 +3,7 @@ import {
   SET_FAV_DATA,
   DEL_FAV_DATA,
   SET_DARK_MODE,
+  DEL_FAV,
 } from './constant';
 
 export const setDiscoverState = (payload) => {
@@ -23,6 +24,12 @@ export const delFavData = (payload) => {
   return {
     type: DEL_FAV_DATA,
     payload,
+  };
+};
+
+export const delFav = () => {
+  return {
+    type: DEL_FAV,
   };
 };
 

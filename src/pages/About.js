@@ -4,12 +4,19 @@ import LanIcon from '../../static/assets/svg/language.svg';
 import TrashIcon from '../../static/assets/svg/trash.svg';
 import SunIcon from '../../static/assets/svg/sun.svg';
 import MoonIcon from '../../static/assets/svg/moon.svg';
+import style from '../style/pages/about.module.scss';
 import { useSelector, useDispatch } from 'react-redux';
-import { setDarkMode } from '../redux/actions';
+import { delFav, setDarkMode } from '../redux/actions';
 
 const About = () => {
   const { darkmode } = useSelector((state) => state);
   const dispatch = useDispatch();
+
+  const deleteLibrary = () => {
+    if (confirm('Remove all manga from library?')) {
+      dispatch(delFav());
+    }
+  };
 
   const toggleDarkMode = () => {
     dispatch(setDarkMode(!darkmode));
@@ -20,11 +27,11 @@ const About = () => {
       <Header style={{ boxShadow: 'unset' }}>
         <h1>About</h1>
       </Header>
-      <div className="about-container">
-        <div className="about-header">
+      <div className={style.container}>
+        <div className={style.header}>
           <h2>Manga</h2>
         </div>
-        <div className="about-option">
+        <div className={style.option}>
           <div>
             <LanIcon width={25} height={25} />
             <div>
@@ -32,7 +39,7 @@ const About = () => {
               <p>Requested manga chapter language</p>
             </div>
           </div>
-          <div>
+          <div onClick={deleteLibrary}>
             <TrashIcon />
             <div>
               <p>Delete Library</p>

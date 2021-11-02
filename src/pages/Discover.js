@@ -6,6 +6,7 @@ import Manga from '../components/Manga';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import SearchIcon from '../../static/assets/svg/search.svg';
+import style from '../style/pages/discover.module.scss';
 
 const Discover = () => {
   const [mangas, setMangas] = useState({});
@@ -63,7 +64,7 @@ const Discover = () => {
           <SearchIcon onClick={toggleSearch} />
         </div>
       </Header>
-      <div className="discover-container">
+      <div className={style.container}>
         {mangas != null &&
           Object.values(mangas).map(({ id, shortTitle, coverFileName }, i) => {
             return (
@@ -78,7 +79,7 @@ const Discover = () => {
           })}
       </div>
       {!Object.keys(mangas).length > 0 && (
-        <div className="loading">
+        <div className={style.loading}>
           <h2>o(≧▽≦)o</h2>
           <p>Loading...</p>
         </div>

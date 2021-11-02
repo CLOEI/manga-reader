@@ -1,6 +1,6 @@
 import { SET_DARK_MODE } from '../constant';
 
-const initialState = Boolean(localStorage.getItem('darkToggled')) || false;
+const initialState = localStorage.getItem('darkToggled') === 'true';
 
 export default (state = initialState, action) => {
   switch (action.type) {

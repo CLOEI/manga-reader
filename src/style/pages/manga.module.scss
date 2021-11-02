@@ -1,4 +1,4 @@
-.manga-header {
+.container {
   position: relative;
   display: grid;
   grid-template-columns: 100px auto;
@@ -10,7 +10,8 @@
   gap: 0.75rem 1rem;
   padding: 12px 15px 0 15px;
   z-index: 1;
-  .manga-header-background {
+  color: var(--text-color);
+  .background {
     position: absolute;
     z-index: -1;
     width: 100%;
@@ -29,17 +30,17 @@
       background: linear-gradient(
         180deg,
         rgba(25, 26, 28, 0.6) 0,
-        hsl(0, 0%, 96%)
+        var(--background-color-foreground)
       );
     }
   }
-  .manga-header-cover {
+  .cover {
     grid-area: cover;
     div {
       position: relative;
       width: 100%;
       padding-bottom: 141.42%;
-      background-color: #fff;
+      background-color: var(--background-color-primary);
       img {
         position: absolute;
         height: 100%;
@@ -49,21 +50,21 @@
       }
     }
   }
-  .manga-header-info {
+  .info {
     grid-area: info;
     overflow: hidden;
     p:first-child {
-      color: #fff;
+      color: hsl(0, 0%, 96%);
       font-size: 1.1rem;
       font-weight: bolder;
       margin-bottom: 0.25rem;
     }
     p:last-child {
-      color: #fff;
+      color: hsl(0, 0%, 96%);
       font-size: 0.75rem;
     }
   }
-  .manga-header-add {
+  .add {
     grid-area: add;
     justify-self: center;
     cursor: pointer;
@@ -74,34 +75,33 @@
       margin: 0 auto;
     }
   }
-  .manga-header-data {
+  .data {
     grid-area: data;
     overflow: hidden;
-    .manga-header-data-tags {
+    .tags {
       overflow: auto;
       width: 100%;
       display: flex;
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
     }
-    .manga-header-data-chapters {
+    .chapters {
       margin-top: 0.5rem;
     }
   }
 }
 
 @media only screen and (min-width: 640px) {
-  .manga-header {
+  .container {
     grid-template-columns: 200px auto;
-    .manga-header-background {
+    .background {
       height: 272px;
     }
-    .manga-header-info {
+    .info {
       p:first-child {
         font-size: 2.8rem;
       }
       p:last-child {
-        color: #fff;
         font-size: 1rem;
       }
     }
@@ -119,7 +119,7 @@
         font-size: 3.5rem;
       }
       p:last-child {
-        color: #fff;
+        color: var(--background-color-primary);
         font-size: 1rem;
       }
     }

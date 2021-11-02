@@ -1,20 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap');
 @import '_reset';
-@import 'components/layout';
-@import 'components/header';
-@import 'components/navbar';
-@import 'components/manga';
-@import 'components/tag';
-@import 'components/chapter';
-@import 'pages/discover';
-@import 'pages/manga';
-@import 'pages/home';
-@import 'pages/about';
+
+body {
+  --background-color-foreground: hsl(0, 0%, 96%);
+  --background-color-primary: #fff;
+  --text-color: hsl(0, 0%, 4%);
+  --text-info: hsl(0, 0%, 29%);
+  &.dark {
+    --background-color-foreground: hsl(0, 0%, 14%);
+    --background-color-primary: hsl(0, 0%, 11%);
+    --text-color: hsl(0, 0%, 96%);
+    --text-info: hsl(0, 0%, 71%);
+  }
+}
 
 h1,
 h2,
 p {
   font-family: 'Oxygen', sans-serif;
+}
+
+.manga-wrapper {
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  padding-bottom: 135%;
+  background-size: cover;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--background-color-primary);
+  background-repeat: no-repeat;
+  p {
+    position: absolute;
+    bottom: 0;
+    font-weight: bold;
+    font-size: 0.9rem;
+    z-index: 1;
+    color: #fff;
+    padding: 0 10px 8px 7px;
+  }
+  &::after {
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.95) 0px -50px 36px -28px inset;
+  }
 }
 
 .search-container {
@@ -27,7 +60,8 @@ p {
     border: 0;
     outline: 0;
     padding: 0;
-    border-bottom: 1px solid black;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--text-color);
   }
 }
 

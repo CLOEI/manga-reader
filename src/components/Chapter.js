@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
+import style from '../style/components/chapter.module.scss';
 
 const Chapter = ({ volume, chapter, title, scanlation, date }) => {
   return (
-    <div className="chapter-container">
+    <div className={style.container}>
       <p>
         {volume
           ? title

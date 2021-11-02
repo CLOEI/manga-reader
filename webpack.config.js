@@ -1,5 +1,6 @@
 const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -23,7 +24,29 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              modules: {
+                localIdentName: '[name]-[local]--[hash:base64:5]',
+              },
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+            },
+          },
+        ],
+        include: /\.module\.s[ac]ss$/,
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
           'css-loader',
           {
             loader: 'sass-loader',
@@ -32,6 +55,7 @@ module.exports = {
             },
           },
         ],
+        exclude: /\.module\.s[ac]ss$/,
       },
       {
         test: /\.svg$/,
@@ -50,6 +74,7 @@ module.exports = {
     new HTMLWebpackPlugin({
       template: path.resolve(__dirname, 'static/index.html'),
     }),
+    new MiniCssExtractPlugin(),
   ],
   devServer: {
     historyApiFallback: true,

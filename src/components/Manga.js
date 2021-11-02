@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import LazyLoad from 'react-lazyload';
+import style from '../style/components/manga.module.scss';
 
 const Manga = ({ id, title, coverFileName }) => {
   const [url, setURL] = useState('');
@@ -29,7 +30,7 @@ const Manga = ({ id, title, coverFileName }) => {
 
 const Loading = () => {
   return (
-    <div className="lds-ellipsis">
+    <div className={style.lds_ellipsis}>
       <div></div>
       <div></div>
       <div></div>

@@ -1,4 +1,4 @@
-import { SET_FAV_DATA, DEL_FAV_DATA } from '../constant';
+import { SET_FAV_DATA, DEL_FAV_DATA, DEL_FAV } from '../constant';
 
 const initialState = JSON.parse(localStorage.getItem('fav')) || {};
 
@@ -14,6 +14,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         mangas: rest,
+      };
+    case DEL_FAV:
+      return {
+        ...state,
+        mangas: {},
       };
     default:
       return state;

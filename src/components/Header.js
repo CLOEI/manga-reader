@@ -1,6 +1,8 @@
+import styles from '../style/components/header.module.scss';
+
 const Header = ({ children, style }) => {
   return (
-    <div className="header-container" style={style}>
+    <div className={styles.container} style={style}>
       {children}
     </div>
   );
