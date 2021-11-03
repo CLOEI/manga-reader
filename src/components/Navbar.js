@@ -1,11 +1,11 @@
 import { useLocation, Link } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import FileIcon from '../../static/assets/svg/file.svg';
 import SearchIcon from '../../static/assets/svg/search.svg';
 import DotIcon from '../../static/assets/svg/dot.svg';
 import style from '../style/components/navbar.module.scss';
 
-const Navbar = () => {
+const Navbar = memo(() => {
   const path = useLocation().pathname;
   const elem = useRef();
   let prevScrollY = window.scrollY;
@@ -54,6 +54,6 @@ const Navbar = () => {
       )}
     </>
   );
-};
+});
 
 export default Navbar;

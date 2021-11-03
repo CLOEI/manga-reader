@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { getMangaList } from '../API';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -10,7 +10,10 @@ import style from '../style/pages/discover.module.scss';
 
 const Discover = () => {
   const [mangas, setMangas] = useState({});
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
   const inputElem = useRef();
+  const observer = useRef();
 
   const debounce = (func, delay) => {
     let timer = null;
@@ -24,24 +27,42 @@ const Discover = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     const params = new URLSearchParams();
     const source = axios.CancelToken.source();
 
     params.append('order[createdAt]', 'desc');
     params.append('limit', '100');
     params.append('includes[]', 'cover_art');
+    params.append('offset', offset);
 
-    getMangaList(source.token, params).then((data) => setMangas(data));
+    getMangaList(source.token, params).then((data) => {
+      setMangas((pre) => ({ ...pre, ...data }));
+      setLoading(false);
+    });
 
     return () => {
       source.cancel();
-      setMangas({});
     };
-  }, []);
+  }, [offset]);
 
-  const toggleSearch = () => {
+  const scrollHandler = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setOffset((pre) => pre + 100);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [observer]
+  );
+
+  const toggleSearch = useCallback(() => {
     inputElem.current.classList.toggle('active');
-  };
+  }, [inputElem.current]);
 
   const debouncedSearch = useCallback(
     debounce((e) => {
@@ -66,17 +87,40 @@ const Discover = () => {
       </Header>
       <div className={style.container}>
         {mangas != null &&
-          Object.values(mangas).map(({ id, shortTitle, coverFileName }, i) => {
-            return (
-              <Link key={i} to={`/manga?id=${id}`} style={{ width: '100%' }}>
-                <Manga
-                  id={id}
-                  title={shortTitle}
-                  coverFileName={coverFileName}
-                />
-              </Link>
-            );
-          })}
+          Object.values(mangas).map(
+            ({ id, shortTitle, coverFileName }, i, arr) => {
+              if (i == arr.length - 1) {
+                return (
+                  <Link
+                    ref={scrollHandler}
+                    key={i}
+                    to={`/manga?id=${id}`}
+                    style={{ width: '100%' }}
+                  >
+                    <Manga
+                      id={id}
+                      title={shortTitle}
+                      coverFileName={coverFileName}
+                    />
+                  </Link>
+                );
+              } else {
+                return (
+                  <Link
+                    key={i}
+                    to={`/manga?id=${id}`}
+                    style={{ width: '100%' }}
+                  >
+                    <Manga
+                      id={id}
+                      title={shortTitle}
+                      coverFileName={coverFileName}
+                    />
+                  </Link>
+                );
+              }
+            }
+          )}
       </div>
       {!Object.keys(mangas).length > 0 && (
         <div className={style.loading}>

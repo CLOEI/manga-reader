@@ -7,7 +7,7 @@ export const getMangaList = (cancelToken, params) => {
       params: params,
       transformResponse: [
         (res) => {
-          const { data } = JSON.parse(res);
+          const { data, total } = JSON.parse(res);
           const newData = {};
 
           data.forEach((item) => {
@@ -25,6 +25,7 @@ export const getMangaList = (cancelToken, params) => {
               title,
               shortTitle,
               coverFileName,
+              total,
             };
           });
 
