@@ -28,7 +28,7 @@ const Home = () => {
           Object.keys(data.mangas).length > 0 &&
           Object.values(data.mangas).map(({ id, title, coverFileName }, i) => {
             return (
-              <Link key={i} to={`/manga?id=${id}`} style={{ width: '100%' }}>
+              <Link key={id} to={`/manga?id=${id}`} style={{ width: '100%' }}>
                 <Manga id={id} title={title} coverFileName={coverFileName} />
               </Link>
             );

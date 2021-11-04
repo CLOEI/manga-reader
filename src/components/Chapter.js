@@ -10,7 +10,7 @@ const Chapter = ({ volume, chapter, title, scanlation, date }) => {
             ? `Vol.${volume} Ch.${chapter} - ${title}`
             : `Vol.${volume} Ch.${chapter}`
           : title
-          ? `Ch.${chapter} - ${title}`
+          ? `Ch.${chapter || 0} - ${title}`
           : `Ch.${chapter}`}
       </p>
       <p>
