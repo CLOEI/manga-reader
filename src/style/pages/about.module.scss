@@ -17,16 +17,18 @@
   .option {
     & > div {
       display: flex;
+      box-sizing: border-box;
+      width: 100%;
       align-items: center;
       padding: 16px;
       cursor: pointer;
-      width: max-content;
       color: var(--text-color);
       fill: var(--text-color);
       p {
         margin-left: 16px;
       }
       & > div > p:last-child {
+        word-break: break-word;
         font-size: 0.8rem;
       }
     }

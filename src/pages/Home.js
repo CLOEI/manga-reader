@@ -2,10 +2,22 @@ import Layout from '../components/Layout';
 import Header from '../components/Header';
 import Manga from '../components/Manga';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import style from '../style/pages/home.module.scss';
 
 const Home = () => {
   const data = JSON.parse(localStorage.getItem('fav'));
+
+  const variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
 
   const isEmpty = (obj) => {
     if (obj == null) return true;
@@ -23,7 +35,12 @@ const Home = () => {
       <Header>
         <h1>Library</h1>
       </Header>
-      <div className={style.container}>
+      <motion.div
+        className={style.container}
+        variants={variants}
+        initial="hidden"
+        animate="show"
+      >
         {data?.mangas &&
           Object.keys(data.mangas).length > 0 &&
           Object.values(data.mangas).map(({ id, title, coverFileName }, i) => {
@@ -33,7 +50,7 @@ const Home = () => {
               </Link>
             );
           })}
-      </div>
+      </motion.div>
       {isEmpty(data?.mangas) && (
         <div className={style.loading}>
           <h2>(ᗒᗣᗕ)՞</h2>
