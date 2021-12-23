@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/api/",
+      "destination": "https://api.mangadex.org/",
+      "permanent": true
+    }
+  ]
+}
