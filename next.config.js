@@ -1,11 +1,10 @@
 module.exports = {
 	reactStrictMode: true,
-	async redirects() {
+	async rewrites() {
 		return [
 			{
-				source: '/api/',
-				destination: 'https://api.mangadex.org/',
-				permanent: true,
+				source: '/api/:x',
+				destination: 'https://api.mangadex.org/:x',
 			},
 		];
 	},
