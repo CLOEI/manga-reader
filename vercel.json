@@ -1,9 +1,8 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/api/:x",
-      "destination": "https://api.mangadex.org/:x",
-      "permanent": false
+      "destination": "https://api.mangadex.org/:x"
     }
   ]
 }
