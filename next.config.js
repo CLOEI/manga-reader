@@ -3,7 +3,7 @@ module.exports = {
 	async rewrites() {
 		return [
 			{
-				source: '/dex/:x',
+				source: '/api/:x',
 				destination: 'https://api.mangadex.org/:x',
 			},
 		];
