@@ -2,33 +2,37 @@ import { Box, Heading } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 function MangaCard({ coverFileName, mangaID, title }) {
 	return (
-		<Card>
-			<Image
-				alt={title}
-				layout="fill"
-				objectFit="cover"
-				src={`https://uploads.mangadex.org/covers/${mangaID}/${coverFileName}`}
-			/>
-			<Heading
-				as="h2"
-				size="sm"
-				pos="absolute"
-				bottom="2"
-				px="2px"
-				zIndex="2"
-				cursor="text"
-			>
-				{title}
-			</Heading>
-		</Card>
+		<Link href={`/manga/${mangaID}`} passHref>
+			<Card>
+				<Image
+					alt={title}
+					layout="fill"
+					objectFit="cover"
+					src={`https://uploads.mangadex.org/covers/${mangaID}/${coverFileName}`}
+				/>
+				<Heading
+					as="h2"
+					size="sm"
+					pos="absolute"
+					bottom="2"
+					px="2px"
+					zIndex="2"
+					cursor="text"
+				>
+					{title}
+				</Heading>
+			</Card>
+		</Link>
 	);
 }
 
-const Card = styled.div`
+const Card = styled.a`
 	position: relative;
+	display: block;
 	width: 100%;
 	padding-bottom: 140%;
 	cursor: pointer;

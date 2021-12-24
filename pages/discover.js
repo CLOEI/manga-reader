@@ -9,6 +9,7 @@ import {
 	Modal,
 	ModalOverlay,
 	ModalContent,
+	ModalBody,
 	InputGroup,
 	InputLeftElement,
 	Input,
@@ -24,7 +25,7 @@ import {
 	FiCompass,
 	FiMoreHorizontal,
 } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import axios from 'axios';
@@ -37,9 +38,20 @@ import MangaCard from '../components/MangaCard';
 
 const fetcher = (url) => axios(url).then((res) => res.data);
 
-function Manga({ offset = 0 }) {
+function debounce(func, delay) {
+	let timer = null;
+	return function (...args) {
+		if (timer) clearTimeout(timer);
+		timer = setTimeout(() => {
+			timer = null;
+			func.apply(this, args);
+		}, delay);
+	};
+}
+
+function Manga({ offset = 0, title = '' }) {
 	const { data: list, error } = useSWR(
-		`/api/manga?includes[]=cover_art&offset=${offset}`,
+		`/api/manga?includes[]=cover_art&offset=${offset}&title=${title}`,
 		fetcher
 	);
 
@@ -72,7 +84,15 @@ function Discover() {
 		threshold: 0.2,
 	});
 	const [offset, setOffset] = useState(0);
+	const [title, setTitle] = useState('');
 	const mangas = [];
+
+	const debounceSearch = useCallback(
+		debounce((e) => {
+			setTitle(e.target.value);
+		}, 500),
+		[]
+	);
 
 	for (let x = 0; x <= offset; x++) {
 		mangas.push(<Manga offset={x * 10} key={x} />);
@@ -105,7 +125,11 @@ function Discover() {
 			</Head>
 			<HStack px="24px" py="12px" spacing="24px" h="70px">
 				<Heading size="lg">Discover</Heading>
-				<HStack flexGrow={1} justifyContent={['flex-end', 'space-between']}>
+				<HStack
+					flexGrow={1}
+					justifyContent={['flex-end', 'space-between']}
+					spacing="4"
+				>
 					<Button
 						w="50%"
 						leftIcon={<FiSearch />}
@@ -172,13 +196,35 @@ function Discover() {
 			{/* Search modal */}
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
-				<ModalContent>
+				<ModalContent px="4">
 					<InputGroup h="64px">
 						<InputLeftElement h="64px">
-							<FiSearch />
+							<Icon as={FiSearch} h="20px" w="20px" />
 						</InputLeftElement>
-						<Input variant="unstyled" placeholder="Mieruko-chan..." />
+						<Input
+							variant="unstyled"
+							placeholder="Mieruko-chan..."
+							onChange={debounceSearch}
+						/>
 					</InputGroup>
+					{title.length > 1 && (
+						<ModalBody>
+							<SimpleGrid
+								columns={2}
+								maxH="450px"
+								overflow="auto"
+								spacing="2"
+								sx={{
+									'::-webkit-scrollbar-thumb': {
+										backgroundColor: 'gray.600',
+										border: '3px solid gray.700',
+									},
+								}}
+							>
+								<Manga title={title} />
+							</SimpleGrid>
+						</ModalBody>
+					)}
 				</ModalContent>
 			</Modal>
 		</>
