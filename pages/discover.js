@@ -14,6 +14,8 @@ import {
 	Input,
 	Icon,
 	IconButton,
+	Spinner,
+	Box,
 } from '@chakra-ui/react';
 import {
 	FiSearch,
@@ -22,7 +24,8 @@ import {
 	FiCompass,
 	FiMoreHorizontal,
 } from 'react-icons/fi';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import useSWR from 'swr';
@@ -34,13 +37,46 @@ import MangaCard from '../components/MangaCard';
 
 const fetcher = (url) => axios(url).then((res) => res.data);
 
-function Discover() {
-	const { isOpen, onOpen, onClose } = useDisclosure();
+function Manga({ offset = 0 }) {
 	const { data: list, error } = useSWR(
-		'/api/manga?includes[]=cover_art',
+		`/api/manga?includes[]=cover_art&offset=${offset}`,
 		fetcher
 	);
-	console.log(list);
+
+	return (
+		<>
+			{list &&
+				list.data.map(({ attributes, relationships, id }) => {
+					const title = attributes.title[Object.keys(attributes.title)[0]];
+					const coverArt = relationships.filter(
+						(item) => item.type === 'cover_art'
+					)[0];
+					const coverFileName = coverArt.attributes.fileName;
+
+					return (
+						<MangaCard
+							mangaID={id}
+							coverFileName={coverFileName}
+							title={title}
+							key={id}
+						/>
+					);
+				})}
+		</>
+	);
+}
+
+function Discover() {
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { ref, inView } = useInView({
+		threshold: 0.2,
+	});
+	const [offset, setOffset] = useState(0);
+	const mangas = [];
+
+	for (let x = 0; x <= offset; x++) {
+		mangas.push(<Manga offset={x * 10} key={x} />);
+	}
 
 	useEffect(() => {
 		const triggerSearch = (e) => {
@@ -55,6 +91,12 @@ function Discover() {
 			document.removeEventListener('keydown', triggerSearch);
 		};
 	}, [onOpen]);
+
+	useEffect(() => {
+		if (inView) {
+			setOffset((state) => state + 1);
+		}
+	}, [inView]);
 
 	return (
 		<>
@@ -92,24 +134,13 @@ function Discover() {
 				minChildWidth="160px"
 				justifyItems="center"
 				spacing="5px"
+				maxH="calc(100vh - 70px - 54px)"
+				overflowY="auto"
 			>
-				{list &&
-					list.data.map(({ attributes, relationships, id }) => {
-						const title = attributes.title[Object.keys(attributes.title)[0]];
-						const coverArt = relationships.filter(
-							(item) => item.type === 'cover_art'
-						)[0];
-						const coverFileName = coverArt.attributes.fileName;
-
-						return (
-							<MangaCard
-								mangaID={id}
-								coverFileName={coverFileName}
-								title={title}
-								key={id}
-							/>
-						);
-					})}
+				{mangas}
+				<Box gridColumn="1/-1" py="10px">
+					<Spinner ref={ref} height="24px" />
+				</Box>
 			</SimpleGrid>
 			<SimpleGrid
 				columns="3"

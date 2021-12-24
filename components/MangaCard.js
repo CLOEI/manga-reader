@@ -35,7 +35,7 @@ const Card = styled.div`
 	border-radius: 4px;
 	overflow: hidden;
 	span {
-		opacity: 0.85 !important;
+		opacity: 0.95 !important;
 	}
 	&::after {
 		position: absolute;
