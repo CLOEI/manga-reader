@@ -24,12 +24,23 @@ import {
 } from 'react-icons/fi';
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
+import axios from 'axios';
+import useSWR from 'swr';
 
 import Link from 'next/link';
 import Head from 'next/head';
 
-export default function Home() {
+import MangaCard from '../components/MangaCard';
+
+const fetcher = (url) => axios(url).then((res) => res.data);
+
+function Discover() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { data: list, error } = useSWR(
+		'/api/manga?includes[]=cover_art',
+		fetcher
+	);
+	console.log(list);
 
 	useEffect(() => {
 		const triggerSearch = (e) => {
@@ -51,12 +62,8 @@ export default function Home() {
 				<title>Manga-reader</title>
 			</Head>
 			<HStack px="24px" py="12px" spacing="24px" h="70px">
-				<Heading size="lg">Library</Heading>
-				<HStack
-					flexGrow={1}
-					justifyContent={['flex-end', 'space-between']}
-					spacing="4"
-				>
+				<Heading size="lg">Discover</Heading>
+				<HStack flexGrow={1} justifyContent={['flex-end', 'space-between']}>
 					<Button
 						w="50%"
 						leftIcon={<FiSearch />}
@@ -80,7 +87,30 @@ export default function Home() {
 					<SIcon as={FiFilter} />
 				</HStack>
 			</HStack>
-			<SimpleGrid columns={[2, null]} minChildWidth="160px"></SimpleGrid>
+			<SimpleGrid
+				columns={[2, null]}
+				minChildWidth="160px"
+				justifyItems="center"
+				spacing="5px"
+			>
+				{list &&
+					list.data.map(({ attributes, relationships, id }) => {
+						const title = attributes.title[Object.keys(attributes.title)[0]];
+						const coverArt = relationships.filter(
+							(item) => item.type === 'cover_art'
+						)[0];
+						const coverFileName = coverArt.attributes.fileName;
+
+						return (
+							<MangaCard
+								mangaID={id}
+								coverFileName={coverFileName}
+								title={title}
+								key={id}
+							/>
+						);
+					})}
+			</SimpleGrid>
 			<SimpleGrid
 				columns="3"
 				w="90%"
@@ -90,6 +120,7 @@ export default function Home() {
 				transform="translateX(-50%)"
 				rounded="sm"
 				overflow="hidden"
+				zIndex={999}
 			>
 				<Link href="/">
 					<a>
@@ -128,3 +159,5 @@ const SIcon = styled(Icon)`
 	height: 25px;
 	cursor: pointer;
 `;
+
+export default Discover;
