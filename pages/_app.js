@@ -7,17 +7,6 @@ const config = {
 
 export const theme = extendTheme({
 	config,
-	styles: {
-		global: {
-			'::-webkit-scrollbar': {
-				width: '8px',
-			},
-			'::-webkit-scrollbar-thumb': {
-				backgroundColor: 'gray.700',
-				border: '3px solid gray.800',
-			},
-		},
-	},
 });
 
 function MyApp({ Component, pageProps }) {

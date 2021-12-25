@@ -43,7 +43,6 @@ function debounce(func, delay) {
 	return function (...args) {
 		if (timer) clearTimeout(timer);
 		timer = setTimeout(() => {
-			timer = null;
 			func.apply(this, args);
 		}, delay);
 	};
@@ -51,7 +50,7 @@ function debounce(func, delay) {
 
 function Manga({ offset = 0, title = '' }) {
 	const { data: list, error } = useSWR(
-		`/api/manga?includes[]=cover_art&offset=${offset}&title=${title}`,
+		`/api/manga?includes[]=cover_art&offset=${offset}&title=${title}&limit=20`,
 		fetcher
 	);
 
@@ -63,7 +62,7 @@ function Manga({ offset = 0, title = '' }) {
 					const coverArt = relationships.filter(
 						(item) => item.type === 'cover_art'
 					)[0];
-					const coverFileName = coverArt.attributes.fileName;
+					const coverFileName = coverArt?.attributes?.fileName;
 
 					return (
 						<MangaCard
@@ -154,8 +153,7 @@ function Discover() {
 				</HStack>
 			</HStack>
 			<SimpleGrid
-				columns={[2, null]}
-				minChildWidth="160px"
+				columns={[2, 4, 4, 5, 10]}
 				justifyItems="center"
 				spacing="5px"
 				maxH="calc(100vh - 70px - 54px)"
@@ -215,9 +213,13 @@ function Discover() {
 								overflow="auto"
 								spacing="2"
 								sx={{
+									'::-webkit-scrollbar': {
+										width: '5px',
+									},
 									'::-webkit-scrollbar-thumb': {
 										backgroundColor: 'gray.600',
 										border: '3px solid gray.700',
+										borderRadius: '4px',
 									},
 								}}
 							>
