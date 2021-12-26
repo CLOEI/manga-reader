@@ -1,5 +1,4 @@
 import { Box, Heading, Text } from '@chakra-ui/react';
-import styled from '@emotion/styled';
 
 import Image from 'next/image';
 import Link from 'next/link';

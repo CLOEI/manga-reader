@@ -24,10 +24,11 @@ import {
 	AiOutlineHome,
 	AiOutlineBook,
 	AiOutlineDash,
+	AiOutlineArrowRight,
 } from 'react-icons/ai';
 import { FiSearch } from 'react-icons/fi';
-import styled from '@emotion/styled';
 
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 import MangaCard from '../components/MangaCard';
@@ -35,6 +36,7 @@ import MangaCard2 from '../components/MangaCard2';
 
 export default function Home({ creatorChoices, discoverData }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const router = useRouter();
 
 	return (
 		<Box mx="4" mb="100px">
@@ -107,6 +109,14 @@ export default function Home({ creatorChoices, discoverData }) {
 							/>
 						);
 					})}
+				</Box>
+				<Box ml="auto" w="max-content">
+					<Button
+						rightIcon={<Icon as={AiOutlineArrowRight} w="25px" h="25px" />}
+						onClick={() => router.push('/discover?p=1')}
+					>
+						Discover more
+					</Button>
 				</Box>
 			</Box>
 			{/** Bottom Navbar */}
