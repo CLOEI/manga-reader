@@ -14,7 +14,7 @@ function MangaCard({ coverFileName, artistName, mangaID, title }) {
 					layout="fill"
 				/>
 			</Box>
-			<Box>
+			<Box mt="2">
 				<Heading as="h3" size="sm" isTruncated>
 					{title}
 				</Heading>

@@ -29,17 +29,17 @@ import { FiSearch } from 'react-icons/fi';
 import styled from '@emotion/styled';
 
 import Head from 'next/head';
-import MangaCard from '../components/MangaCard';
 
-export default function Home({ creatorChoices }) {
+import MangaCard from '../components/MangaCard';
+import MangaCard2 from '../components/MangaCard2';
+
+export default function Home({ creatorChoices, discoverData }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	console.log(creatorChoices);
-
 	return (
-		<Box mx="4">
+		<Box mx="4" mb="100px">
 			<HStack justifyContent="space-between" mt="3" mb="6">
-				<Heading as="h1" size="3xl">
+				<Heading as="h1" size="2xl">
 					Home
 				</Heading>
 				<IconButton
@@ -56,33 +56,59 @@ export default function Home({ creatorChoices }) {
 			>
 				<Text color="gray.400">Mieruko-chan...</Text>
 			</Button>
-			<Box mt="6" mb="4">
-				<Heading as="h2" size="lg">
+			{/** Creator choice */}
+			<Box mt="6">
+				<Heading as="h2" size="lg" mb="4">
 					Creator choices
 				</Heading>
-			</Box>
-			{/** Creator choice grid */}
-			<HStack overflowX="auto" pb="4">
-				{creatorChoices.map(({ attributes, relationships, id }, i) => {
-					const title = attributes.title[Object.keys(attributes.title)[0]];
-					const coverFileName = relationships.filter(
-						(item) => item.type === 'cover_art'
-					)[0].attributes.fileName;
-					const artistName = relationships.filter(
-						(item) => item.type === 'artist'
-					)[0].attributes.name;
+				<HStack overflowX="auto" pb="4">
+					{creatorChoices.map(({ attributes, relationships, id }, i) => {
+						const title = attributes.title[Object.keys(attributes.title)[0]];
+						const coverFileName = relationships.filter(
+							(item) => item.type === 'cover_art'
+						)[0].attributes.fileName;
+						const artistName = relationships.filter(
+							(item) => item.type === 'artist'
+						)[0].attributes.name;
 
-					return (
-						<MangaCard
-							title={title}
-							mangaID={id}
-							coverFileName={coverFileName}
-							artistName={artistName}
-							key={i}
-						/>
-					);
-				})}
-			</HStack>
+						return (
+							<MangaCard
+								title={title}
+								mangaID={id}
+								coverFileName={coverFileName}
+								artistName={artistName}
+								key={i}
+							/>
+						);
+					})}
+				</HStack>
+			</Box>
+			{/** Discover */}
+			<Box mt="5" mb="4">
+				<Heading as="h2" size="lg" mb="4">
+					Discover
+				</Heading>
+				<Box>
+					{discoverData.map(({ attributes, relationships, id }, i) => {
+						const title = attributes.title[Object.keys(attributes.title)[0]];
+						const description =
+							attributes.description[Object.keys(attributes.description)[0]];
+						const coverFileName = relationships.filter(
+							(item) => item.type === 'cover_art'
+						)[0].attributes.fileName;
+
+						return (
+							<MangaCard2
+								title={title}
+								description={description}
+								mangaID={id}
+								coverFileName={coverFileName}
+								key={i}
+							/>
+						);
+					})}
+				</Box>
+			</Box>
 			{/** Bottom Navbar */}
 			<SimpleGrid
 				pos="fixed"
@@ -127,14 +153,19 @@ export default function Home({ creatorChoices }) {
 }
 
 export async function getServerSideProps() {
-	const res = await fetch(
+	const creator = await fetch(
 		'https://api.mangadex.org/manga?ids[]=a96676e5-8ae2-425e-b549-7f15dd34a6d8&ids[]=9e03b2ca-5191-44a6-88b6-c0cd49d06b51&ids[]=a77742b1-befd-49a4-bff5-1ad4e6b0ef7b&ids[]=7f952b22-812d-4252-88e1-a99818f13acd&ids[]=cfc3d743-bd89-48e2-991f-63e680cc4edf&ids[]=d7037b2a-874a-4360-8a7b-07f2899152fd&ids[]=829fc3a7-d4f4-42e9-9032-0917083f9e0d&ids[]=b49fd121-19bf-4344-a8e1-d1be7ca04e08&includes[]=artist&includes[]=cover_art'
 	);
-	const data = await res.json();
+	const creatorChoices = await creator.json();
+	const discover = await fetch(
+		'https://api.mangadex.org/manga?includes[]=artist&includes[]=cover_art&limit=8'
+	);
+	const discoverData = await discover.json();
 
 	return {
 		props: {
-			creatorChoices: data.data,
+			creatorChoices: creatorChoices.data,
+			discoverData: discoverData.data,
 		},
 	};
 }
