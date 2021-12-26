@@ -2,17 +2,14 @@ import {
 	Box,
 	Text,
 	HStack,
-	VStack,
-	Avatar,
 	IconButton,
 	Icon,
 	Button,
 	Heading,
-	Skeleton,
-	SkeletonText,
 	Modal,
 	ModalOverlay,
 	ModalContent,
+	ModalBody,
 	useDisclosure,
 	InputGroup,
 	InputLeftElement,
@@ -27,6 +24,9 @@ import {
 	AiOutlineArrowRight,
 } from 'react-icons/ai';
 import { FiSearch } from 'react-icons/fi';
+import { useCallback, useState } from 'react';
+import useSWR from 'swr';
+import axios from 'axios';
 
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -34,9 +34,62 @@ import Head from 'next/head';
 import MangaCard from '../components/MangaCard';
 import MangaCard2 from '../components/MangaCard2';
 
+const fetcher = (url) => axios(url).then((res) => res.data);
+
+function debounce(func, delay) {
+	let timer = null;
+	return function (...args) {
+		if (timer) clearTimeout(timer);
+		timer = setTimeout(() => {
+			func.apply(this, args);
+		}, delay);
+	};
+}
+
+function Manga({ offset = 0, title = '' }) {
+	const { data: list, error } = useSWR(
+		`/api/manga?includes[]=cover_art&offset=${offset}&title=${title}&limit=10`,
+		fetcher
+	);
+
+	return (
+		<>
+			{list &&
+				list.data.map(({ attributes, relationships, id }) => {
+					const title = attributes.title[Object.keys(attributes.title)[0]];
+					const description =
+						attributes.description[Object.keys(attributes.description)[0]];
+					const coverArt = relationships.filter(
+						(item) => item.type === 'cover_art'
+					)[0];
+					const coverFileName = coverArt.attributes?.fileName;
+
+					return (
+						<MangaCard2
+							mangaID={id}
+							coverFileName={coverFileName}
+							title={title}
+							description={description}
+							key={id}
+						/>
+					);
+				})}
+		</>
+	);
+}
+
 export default function Home({ creatorChoices, discoverData }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [title, setTitle] = useState('');
 	const router = useRouter();
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedSearch = useCallback(
+		debounce((e) => {
+			setTitle(e.target.value);
+		}, 500),
+		[]
+	);
 
 	return (
 		<Box mx="4" mb="100px">
@@ -154,8 +207,13 @@ export default function Home({ creatorChoices, discoverData }) {
 						<InputLeftElement h="64px">
 							<Icon as={FiSearch} w="20px" h="20px" />
 						</InputLeftElement>
-						<Input type="text" h="64px" />
+						<Input type="text" h="64px" onChange={debouncedSearch} />
 					</InputGroup>
+					{title.length > 1 && (
+						<ModalBody maxH="70vh" overflow="auto">
+							<Manga title={title} />
+						</ModalBody>
+					)}
 				</ModalContent>
 			</Modal>
 		</Box>
