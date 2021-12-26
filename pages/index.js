@@ -1,130 +1,140 @@
 import {
-	SimpleGrid,
-	Heading,
+	Box,
 	Text,
 	HStack,
+	VStack,
+	Avatar,
+	IconButton,
+	Icon,
 	Button,
-	Kbd,
-	useDisclosure,
+	Heading,
+	Skeleton,
+	SkeletonText,
 	Modal,
 	ModalOverlay,
 	ModalContent,
+	useDisclosure,
 	InputGroup,
 	InputLeftElement,
 	Input,
-	Icon,
-	IconButton,
+	SimpleGrid,
 } from '@chakra-ui/react';
 import {
-	FiSearch,
-	FiFilter,
-	FiBook,
-	FiCompass,
-	FiMoreHorizontal,
-} from 'react-icons/fi';
-import { useEffect } from 'react';
+	AiOutlineAppstore,
+	AiOutlineHome,
+	AiOutlineBook,
+	AiOutlineDash,
+} from 'react-icons/ai';
+import { FiSearch } from 'react-icons/fi';
 import styled from '@emotion/styled';
 
-import Link from 'next/link';
 import Head from 'next/head';
+import MangaCard from '../components/MangaCard';
 
-export default function Home() {
+export default function Home({ creatorChoices }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	useEffect(() => {
-		const triggerSearch = (e) => {
-			if (e.ctrlKey && e.keyCode === 75) {
-				e.preventDefault();
-				onOpen();
-			}
-		};
-		document.addEventListener('keydown', triggerSearch);
-
-		return () => {
-			document.removeEventListener('keydown', triggerSearch);
-		};
-	}, [onOpen]);
+	console.log(creatorChoices);
 
 	return (
-		<>
-			<Head>
-				<title>Manga-reader</title>
-			</Head>
-			<HStack px="24px" py="12px" spacing="24px" h="70px">
-				<Heading size="lg">Library</Heading>
-				<HStack
-					flexGrow={1}
-					justifyContent={['flex-end', 'space-between']}
-					spacing="4"
-				>
-					<Button
-						w="50%"
-						leftIcon={<FiSearch />}
-						justifyContent="flex-start"
-						display={['none', 'flex']}
-						onClick={() => onOpen()}
-					>
-						<HStack flexGrow={1} justifyContent="space-between">
-							<Text color="gray.600">Mieruko-chan...</Text>
-							<HStack spacing="0">
-								<Kbd>Ctrl</Kbd>
-								<Kbd>K</Kbd>
-							</HStack>
-						</HStack>
-					</Button>
-					<SIcon
-						as={FiSearch}
-						display={['initial', 'none']}
-						onClick={() => onOpen()}
-					/>
-					<SIcon as={FiFilter} />
-				</HStack>
+		<Box mx="4">
+			<HStack justifyContent="space-between" mt="3" mb="6">
+				<Heading as="h1" size="3xl">
+					Home
+				</Heading>
+				<IconButton
+					icon={<Icon as={AiOutlineAppstore} w="30px" h="30px" />}
+					variant="outline"
+				/>
 			</HStack>
-			<SimpleGrid columns={[2, null]} minChildWidth="160px"></SimpleGrid>
-			<SimpleGrid
-				columns="3"
-				w="90%"
-				pos="fixed"
-				bottom="2"
-				left="50%"
-				transform="translateX(-50%)"
-				rounded="sm"
-				overflow="hidden"
+			<Button
+				leftIcon={<Icon as={FiSearch} w="25px" h="25px" color="gray.400" />}
+				w="100%"
+				justifyContent="flex-start"
+				h="60px"
+				onClick={onOpen}
 			>
-				<Link href="/">
-					<a>
-						<IconButton icon={<FiBook />} rounded="none" w="100%" />
-					</a>
-				</Link>
-				<Link href="/discover">
-					<a>
-						<IconButton icon={<FiCompass />} rounded="none" w="100%" />
-					</a>
-				</Link>
-				<Link href="/">
-					<a>
-						<IconButton icon={<FiMoreHorizontal />} rounded="none" w="100%" />
-					</a>
-				</Link>
+				<Text color="gray.400">Mieruko-chan...</Text>
+			</Button>
+			<Box mt="6" mb="4">
+				<Heading as="h2" size="lg">
+					Creator choices
+				</Heading>
+			</Box>
+			{/** Creator choice grid */}
+			<HStack overflowX="auto" pb="4">
+				{creatorChoices.map(({ attributes, relationships, id }, i) => {
+					const title = attributes.title[Object.keys(attributes.title)[0]];
+					const coverFileName = relationships.filter(
+						(item) => item.type === 'cover_art'
+					)[0].attributes.fileName;
+					const artistName = relationships.filter(
+						(item) => item.type === 'artist'
+					)[0].attributes.name;
+
+					return (
+						<MangaCard
+							title={title}
+							mangaID={id}
+							coverFileName={coverFileName}
+							artistName={artistName}
+							key={i}
+						/>
+					);
+				})}
+			</HStack>
+			{/** Bottom Navbar */}
+			<SimpleGrid
+				pos="fixed"
+				bottom="0"
+				left="0"
+				w="100%"
+				h="70px"
+				bgColor="gray.200"
+				borderRadius="15px 15px 0 0"
+				columns={3}
+				zIndex={999}
+			>
+				<IconButton
+					icon={<Icon as={AiOutlineHome} color="black" w="20px" h="20px" />}
+					variant="link"
+					borderTopLeftRadius="15px"
+				/>
+				<IconButton
+					icon={<Icon as={AiOutlineBook} color="black" w="20px" h="20px" />}
+					variant="link"
+				/>
+				<IconButton
+					icon={<Icon as={AiOutlineDash} color="black" w="20px" h="20px" />}
+					variant="link"
+					borderTopRightRadius="15px"
+				/>
 			</SimpleGrid>
-			{/* Search modal */}
+			{/** Modal for search */}
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent>
-					<InputGroup h="64px">
+					<InputGroup>
 						<InputLeftElement h="64px">
-							<FiSearch />
+							<Icon as={FiSearch} w="20px" h="20px" />
 						</InputLeftElement>
-						<Input variant="unstyled" placeholder="Mieruko-chan..." />
+						<Input type="text" h="64px" />
 					</InputGroup>
 				</ModalContent>
 			</Modal>
-		</>
+		</Box>
 	);
 }
 
-const SIcon = styled(Icon)`
-	width: 25px;
-	height: 25px;
-	cursor: pointer;
-`;
+export async function getServerSideProps() {
+	const res = await fetch(
+		'https://api.mangadex.org/manga?ids[]=a96676e5-8ae2-425e-b549-7f15dd34a6d8&ids[]=9e03b2ca-5191-44a6-88b6-c0cd49d06b51&ids[]=a77742b1-befd-49a4-bff5-1ad4e6b0ef7b&ids[]=7f952b22-812d-4252-88e1-a99818f13acd&ids[]=cfc3d743-bd89-48e2-991f-63e680cc4edf&ids[]=d7037b2a-874a-4360-8a7b-07f2899152fd&ids[]=829fc3a7-d4f4-42e9-9032-0917083f9e0d&ids[]=b49fd121-19bf-4344-a8e1-d1be7ca04e08&includes[]=artist&includes[]=cover_art'
+	);
+	const data = await res.json();
+
+	return {
+		props: {
+			creatorChoices: data.data,
+		},
+	};
+}
