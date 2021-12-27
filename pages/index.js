@@ -209,7 +209,7 @@ export default function Home({ creatorChoices, discoverData }) {
 						</InputLeftElement>
 						<Input type="text" h="64px" onChange={debouncedSearch} />
 					</InputGroup>
-					{title.length > 1 && (
+					{title.length > 0 && (
 						<ModalBody maxH="70vh" overflow="auto">
 							<Manga title={title} />
 						</ModalBody>

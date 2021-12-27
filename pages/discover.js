@@ -1,6 +1,5 @@
 import {
 	Heading,
-	Text,
 	Box,
 	HStack,
 	IconButton,
