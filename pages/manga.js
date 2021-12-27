@@ -7,7 +7,7 @@ import Error from 'next/error';
 
 function Manga({ data }) {
 	const router = useRouter();
-	console.log(data);
+
 	if (data.result === 'error') {
 		return <Error statusCode={404} />;
 	}
