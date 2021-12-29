@@ -7,8 +7,9 @@ import {
 	VStack,
 	HStack,
 	SkeletonText,
+	Divider,
 } from '@chakra-ui/react';
-import { AiOutlineArrowLeft } from 'react-icons/ai';
+import { AiOutlineArrowLeft, AiOutlineHeart } from 'react-icons/ai';
 import useSWRInfinite from 'swr/infinite';
 
 import { useRouter } from 'next/router';
@@ -18,8 +19,8 @@ import Error from 'next/error';
 function Manga({ data }) {
 	const router = useRouter();
 	const query = router.query;
-	const chapterListData = useChapterData(query.id);
-	if (data.result === 'error') {
+	const [chapterListData, total, error] = useChapterData(query.id);
+	if (data.result === 'error' || error) {
 		return <Error statusCode={404} />;
 	}
 
@@ -79,11 +80,16 @@ function Manga({ data }) {
 					<Tag tags={tags} />
 				</HStack>
 			</Box>
-			<Box px="3" pt="2">
-				<Box>
-					<SkeletonText noOfLines={2} />
-				</Box>
-			</Box>
+			<HStack px="3" justifyContent="space-around" h="5rem">
+				<Icon as={AiOutlineHeart} w="2.5rem" h="2.5rem" />
+				<Divider orientation="vertical" />
+				<VStack>
+					<Text size="sm" fontWeight="semibold">
+						Chapter
+					</Text>
+					<Text>{total}</Text>
+				</VStack>
+			</HStack>
 		</Box>
 	);
 }
@@ -116,26 +122,33 @@ const fetcher = (offset, id) =>
 	).then((res) => res.json());
 
 const useChapterData = (id) => {
-	const { data, size, setSize } = useSWRInfinite((offset, previousData) => {
-		if (previousData && !previousData.data) return null;
+	const { data, size, setSize, error } = useSWRInfinite(
+		(offset, previousData) => {
+			if (previousData && !previousData.data) return null;
 
-		return [offset, id];
-	}, fetcher);
+			return [offset, id];
+		},
+		fetcher
+	);
+	if (error) return [null, 0, true];
+	if (!data) return [null, 0, false];
+	try {
+		const total = data[0].total;
+		const currTotal = data.reduce((pre, curr) => {
+			return pre + curr.data.length;
+		}, 0);
 
-	if (!data) return null;
-	const total = data[0].total;
-	const currTotal = data.reduce((pre, curr) => {
-		return pre + curr.data.length;
-	}, 0);
-
-	if (parseInt(total, 10) > currTotal) {
-		setSize(size + 1);
+		if (parseInt(total, 10) > currTotal) {
+			setSize(size + 1);
+		}
+		if (currTotal === parseInt(total, 10)) {
+			return [data, total, false];
+		}
+	} catch (err) {
+		return [null, 0, true];
 	}
-	if (currTotal === parseInt(total, 10)) {
-		return data;
-	}
 
-	return null;
+	return [null, 0, false];
 };
 
 export async function getServerSideProps(ctx) {
