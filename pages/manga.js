@@ -98,8 +98,8 @@ function Manga({ data }) {
 							[]
 								.concat(...chapterListData.map((item) => item.data))
 								.sort((a, b) => {
-									const first = parseInt(a.attributes.chapter, 10) || 0;
-									const sec = parseInt(b.attributes.chapter, 10) || 0;
+									const first = parseFloat(a.attributes.chapter, 10) || 0;
+									const sec = parseFloat(b.attributes.chapter, 10) || 0;
 
 									return sec - first;
 								})
