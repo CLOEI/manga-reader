@@ -8,6 +8,7 @@ import {
 	HStack,
 	SkeletonText,
 	Divider,
+	scaleFadeConfig,
 } from '@chakra-ui/react';
 import { AiOutlineArrowLeft, AiOutlineHeart } from 'react-icons/ai';
 
@@ -59,7 +60,7 @@ function Manga({ data }) {
 				</Heading>
 			</Box>
 			<VStack my="4">
-				<Box pos="relative" w="160px" pb="65%" rounded="lg" overflow="hidden">
+				<Box pos="relative" w="160px" pb="245px" rounded="lg" overflow="hidden">
 					<Image
 						alt={title}
 						src={`https://uploads.mangadex.org/covers/${id}/${coverFileName}`}
@@ -83,7 +84,7 @@ function Manga({ data }) {
 				</Box>
 				<HStack justifyContent="space-around" h="5rem" my="2.5">
 					<Icon as={AiOutlineHeart} w="3rem" h="3rem" />
-					<Divider orientation="vertical" />
+					<Divider orientation="vertical" bgColor="gray.100" />
 					<VStack>
 						<Text size="sm" fontWeight="semibold">
 							Chapter
@@ -92,7 +93,7 @@ function Manga({ data }) {
 					</VStack>
 				</HStack>
 				<Box>
-					<SkeletonText noOfLines={2} isLoaded={!!chapterListData}>
+					<SkeletonText noOfLines={4} spacing="3.5" isLoaded={!!chapterListData}>
 						{chapterListData &&
 							[]
 								.concat(...chapterListData.map((item) => item.data))
@@ -100,13 +101,12 @@ function Manga({ data }) {
 									const first = parseInt(a.attributes.chapter, 10) || 0;
 									const sec = parseInt(b.attributes.chapter, 10) || 0;
 
-									return first - sec;
+									return sec - first;
 								})
 								.map(({ attributes, relationships }, i) => {
 									const title = attributes.title;
 									const volume = attributes.volume;
 									const chapter = attributes.chapter;
-									console.log(relationships);
 
 									return (
 										<ChapterCard
