@@ -10,21 +10,21 @@ import {
 	Divider,
 } from '@chakra-ui/react';
 import { AiOutlineArrowLeft, AiOutlineHeart } from 'react-icons/ai';
-import useSWRInfinite from 'swr/infinite';
 
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Error from 'next/error';
 
+import useChapterData from '../hooks/useChapterData';
+import ChapterCard from '../components/ChapterCard';
+
 function Manga({ data }) {
 	const router = useRouter();
 	const query = router.query;
-	const [chapterListData, total, error] = useChapterData(query.id);
+	const { data: chapterListData, total, error } = useChapterData(query.id);
 	if (data.result === 'error' || error) {
 		return <Error statusCode={404} />;
 	}
-
-	console.log(chapterListData);
 
 	const { attributes, relationships, id } = data.data;
 	const title = attributes.title[Object.keys(attributes.title)[0]];
@@ -75,21 +75,51 @@ function Manga({ data }) {
 				</Box>
 			</VStack>
 			<Box px="3">
-				<Text noOfLines={6}>{description}</Text>
-				<HStack overflow="auto" pb="4" mt="4">
-					<Tag tags={tags} />
+				<Box>
+					<Text noOfLines={6}>{description}</Text>
+					<HStack overflow="auto" pb="4" mt="4">
+						<Tag tags={tags} />
+					</HStack>
+				</Box>
+				<HStack justifyContent="space-around" h="5rem" my="2.5">
+					<Icon as={AiOutlineHeart} w="3rem" h="3rem" />
+					<Divider orientation="vertical" />
+					<VStack>
+						<Text size="sm" fontWeight="semibold">
+							Chapter
+						</Text>
+						<Text>{total}</Text>
+					</VStack>
 				</HStack>
+				<Box>
+					<SkeletonText noOfLines={2} isLoaded={!!chapterListData}>
+						{chapterListData &&
+							[]
+								.concat(...chapterListData.map((item) => item.data))
+								.sort((a, b) => {
+									const first = parseInt(a.attributes.chapter, 10) || 0;
+									const sec = parseInt(b.attributes.chapter, 10) || 0;
+
+									return first - sec;
+								})
+								.map(({ attributes, relationships }, i) => {
+									const title = attributes.title;
+									const volume = attributes.volume;
+									const chapter = attributes.chapter;
+									console.log(relationships);
+
+									return (
+										<ChapterCard
+											key={i}
+											title={title}
+											volume={volume}
+											chapter={chapter}
+										/>
+									);
+								})}
+					</SkeletonText>
+				</Box>
 			</Box>
-			<HStack px="3" justifyContent="space-around" h="5rem">
-				<Icon as={AiOutlineHeart} w="2.5rem" h="2.5rem" />
-				<Divider orientation="vertical" />
-				<VStack>
-					<Text size="sm" fontWeight="semibold">
-						Chapter
-					</Text>
-					<Text>{total}</Text>
-				</VStack>
-			</HStack>
 		</Box>
 	);
 }
@@ -112,43 +142,6 @@ const Tag = ({ tags }) => {
 			})}
 		</>
 	);
-};
-
-const fetcher = (offset, id) =>
-	fetch(
-		`/api/chapter?manga=${id}&offset=${
-			offset * 100
-		}&limit=100&translatedLanguage[]=en`
-	).then((res) => res.json());
-
-const useChapterData = (id) => {
-	const { data, size, setSize, error } = useSWRInfinite(
-		(offset, previousData) => {
-			if (previousData && !previousData.data) return null;
-
-			return [offset, id];
-		},
-		fetcher
-	);
-	if (error) return [null, 0, true];
-	if (!data) return [null, 0, false];
-	try {
-		const total = data[0].total;
-		const currTotal = data.reduce((pre, curr) => {
-			return pre + curr.data.length;
-		}, 0);
-
-		if (parseInt(total, 10) > currTotal) {
-			setSize(size + 1);
-		}
-		if (currTotal === parseInt(total, 10)) {
-			return [data, total, false];
-		}
-	} catch (err) {
-		return [null, 0, true];
-	}
-
-	return [null, 0, false];
 };
 
 export async function getServerSideProps(ctx) {
