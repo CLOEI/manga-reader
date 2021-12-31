@@ -1,9 +1,18 @@
-import { Box, VStack, SimpleGrid, Heading, Text } from '@chakra-ui/react';
+import {
+	Box,
+	VStack,
+	SimpleGrid,
+	Heading,
+	Text,
+	useColorModeValue,
+} from '@chakra-ui/react';
 
 import Image from 'next/image';
 import Link from 'next/link';
 
 function MangaCard2({ coverFileName, mangaID, title, description }) {
+	const bg = useColorModeValue('gray.100', 'gray.700');
+
 	return (
 		<Link href={`/manga?id=${mangaID}`} passHref>
 			<SimpleGrid
@@ -11,7 +20,7 @@ function MangaCard2({ coverFileName, mangaID, title, description }) {
 				h="226px"
 				overflowY="hidden"
 				mb="4"
-				bgColor="gray.100"
+				bgColor={bg}
 				rounded="md"
 				overflow="hidden"
 				as="a"

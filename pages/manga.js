@@ -8,6 +8,7 @@ import {
 	HStack,
 	SkeletonText,
 	Divider,
+	useColorModeValue,
 } from '@chakra-ui/react';
 import { AiOutlineArrowLeft, AiOutlineHeart } from 'react-icons/ai';
 
@@ -126,17 +127,13 @@ function Manga({ data }) {
 }
 
 const Tag = ({ tags }) => {
+	const bg = useColorModeValue('gray.100', 'gray.700');
+
 	return (
 		<>
 			{tags.map((tag, i) => {
 				return (
-					<Box
-						key={i}
-						whiteSpace="nowrap"
-						bgColor="gray.100"
-						p="2"
-						borderRadius="12px"
-					>
+					<Box key={i} whiteSpace="nowrap" bgColor={bg} p="2" borderRadius="12px">
 						<Text>{tag}</Text>
 					</Box>
 				);

@@ -14,14 +14,12 @@ import {
 	InputGroup,
 	InputLeftElement,
 	Input,
-	SimpleGrid,
 	Avatar,
+	useColorMode,
 } from '@chakra-ui/react';
 import {
 	AiOutlineAppstore,
-	AiOutlineHome,
 	AiOutlineBook,
-	AiOutlineDash,
 	AiOutlineArrowRight,
 	AiOutlineLogout,
 	AiOutlineCompass,
@@ -37,6 +35,7 @@ import Head from 'next/head';
 import { useAuth } from '../hooks/useAuth';
 import MangaCard from '../components/MangaCard';
 import MangaCard2 from '../components/MangaCard2';
+import Navbar from '../components/Navbar';
 
 const fetcher = (url) => axios(url).then((res) => res.data);
 
@@ -48,6 +47,7 @@ export default function Home({ creatorChoices, discoverData }) {
 		onClose: onSearchClose,
 	} = useDisclosure();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { colorMode, toggleColorMode } = useColorMode();
 	const [title, setTitle] = useState('');
 	const router = useRouter();
 
@@ -142,32 +142,7 @@ export default function Home({ creatorChoices, discoverData }) {
 				</Box>
 			</Box>
 			{/** Bottom Navbar */}
-			<SimpleGrid
-				pos="fixed"
-				bottom="0"
-				left="0"
-				w="100%"
-				h="70px"
-				bgColor="gray.200"
-				borderRadius="15px 15px 0 0"
-				columns={3}
-				zIndex={999}
-			>
-				<IconButton
-					icon={<Icon as={AiOutlineHome} color="black" w="20px" h="20px" />}
-					variant="link"
-					borderTopLeftRadius="15px"
-				/>
-				<IconButton
-					icon={<Icon as={AiOutlineBook} color="black" w="20px" h="20px" />}
-					variant="link"
-				/>
-				<IconButton
-					icon={<Icon as={AiOutlineDash} color="black" w="20px" h="20px" />}
-					variant="link"
-					borderTopRightRadius="15px"
-				/>
-			</SimpleGrid>
+			<Navbar />
 			{/** Modal for menu */}
 			<Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom">
 				<ModalOverlay />
@@ -198,6 +173,8 @@ export default function Home({ creatorChoices, discoverData }) {
 							w="100%"
 							justifyContent="flex-start"
 							mb="1"
+							onClick={() => router.push('/library')}
+							variant="ghost"
 						>
 							Library
 						</Button>
@@ -207,16 +184,21 @@ export default function Home({ creatorChoices, discoverData }) {
 							justifyContent="flex-start"
 							mb="1"
 							onClick={() => router.push('/discover?p=1')}
+							variant="ghost"
 						>
 							Discover
 						</Button>
 						<Button
-							leftIcon={<Icon as={FiMoon} />}
+							leftIcon={
+								colorMode === 'dark' ? <Icon as={FiSun} /> : <Icon as={FiMoon} />
+							}
 							w="100%"
 							justifyContent="flex-start"
 							mb="1"
+							onClick={() => toggleColorMode()}
+							variant="ghost"
 						>
-							Dark mode
+							{colorMode === 'dark' ? 'Light' : 'Dark'} mode
 						</Button>
 					</ModalBody>
 				</ModalContent>
@@ -231,10 +213,10 @@ export default function Home({ creatorChoices, discoverData }) {
 						</InputLeftElement>
 						<Input
 							type="text"
-							h="64px"
+							variant="unstyled"
+							height="64px"
 							onChange={debouncedSearch}
 							placeholder="Mieruko-chan..."
-							variant="flushed"
 						/>
 					</InputGroup>
 					{title.length > 0 && (
