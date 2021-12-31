@@ -22,13 +22,14 @@ function useProvideAuth() {
 	const [user, setUser] = useState(null);
 	const [error, setError] = useState(null);
 
-	const signin = signInWithPopup(auth, githubProvider)
-		.then((res) => setUser(res))
-		.catch((err) => setError(err));
-
-	const signout = signOut(auth)
-		.then((res) => setUser(res))
-		.catch((err) => setError(err));
+	const signin = () => {
+		return signInWithPopup(auth, githubProvider)
+			.then((res) => setUser(res))
+			.catch((err) => setError(err));
+	};
+	const signout = () => {
+		return signOut(auth).then(() => setUser(null));
+	};
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,9 +40,7 @@ function useProvideAuth() {
 			}
 		});
 
-		return () => {
-			unsubscribe();
-		};
+		return () => unsubscribe();
 	}, []);
 
 	return {

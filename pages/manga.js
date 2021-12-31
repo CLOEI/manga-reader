@@ -35,7 +35,7 @@ function Manga({ data }) {
 		(item) => item.type === 'cover_art'
 	)[0].attributes.fileName;
 	const artistName = relationships.filter((item) => item.type === 'artist')[0]
-		.attributes.name;
+		?.attributes.name;
 	const tags = attributes.tags.map((tag) => tag.attributes.name.en);
 
 	return (
@@ -48,7 +48,7 @@ function Manga({ data }) {
 					left="10px"
 					top="50%"
 					transform="translateY(-50%)"
-					onClick={() => router.replace('/')}
+					onClick={() => router.back()}
 				/>
 				<Heading
 					textAlign="center"

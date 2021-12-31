@@ -1,4 +1,5 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ProvideAuth } from '../hooks/useAuth';
 
 const config = {
 	initialColorMode: 'light',
@@ -12,7 +13,9 @@ export const theme = extendTheme({
 function MyApp({ Component, pageProps }) {
 	return (
 		<ChakraProvider theme={theme}>
-			<Component {...pageProps} />
+			<ProvideAuth>
+				<Component {...pageProps} />
+			</ProvideAuth>
 		</ChakraProvider>
 	);
 }

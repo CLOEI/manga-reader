@@ -207,7 +207,13 @@ export default function Home({ creatorChoices, discoverData }) {
 						<InputLeftElement h="64px">
 							<Icon as={FiSearch} w="20px" h="20px" />
 						</InputLeftElement>
-						<Input type="text" h="64px" onChange={debouncedSearch} />
+						<Input
+							type="text"
+							h="64px"
+							onChange={debouncedSearch}
+							placeholder="Mieruko-chan..."
+							variant="flushed"
+						/>
 					</InputGroup>
 					{title.length > 0 && (
 						<ModalBody maxH="70vh" overflow="auto">
