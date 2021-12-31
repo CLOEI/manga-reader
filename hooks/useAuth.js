@@ -23,12 +23,10 @@ function useProvideAuth() {
 	const [error, setError] = useState(null);
 
 	const signin = () => {
-		return signInWithPopup(auth, githubProvider)
-			.then((res) => setUser(res))
-			.catch((err) => setError(err));
+		return signInWithPopup(auth, githubProvider).catch((err) => setError(err));
 	};
 	const signout = () => {
-		return signOut(auth).then(() => setUser(null));
+		return signOut(auth).catch((err) => setError(err));
 	};
 
 	useEffect(() => {

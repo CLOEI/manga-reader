@@ -8,7 +8,6 @@ import {
 	HStack,
 	SkeletonText,
 	Divider,
-	scaleFadeConfig,
 } from '@chakra-ui/react';
 import { AiOutlineArrowLeft, AiOutlineHeart } from 'react-icons/ai';
 
@@ -16,11 +15,13 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Error from 'next/error';
 
+import { useAuth } from '../hooks/useAuth';
 import useChapterData from '../hooks/useChapterData';
 import ChapterCard from '../components/ChapterCard';
 
 function Manga({ data }) {
 	const router = useRouter();
+	const auth = useAuth();
 	const query = router.query;
 	const { data: chapterListData, total, error } = useChapterData(query.id);
 	if (data.result === 'error' || error) {

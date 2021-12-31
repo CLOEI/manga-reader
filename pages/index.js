@@ -15,6 +15,7 @@ import {
 	InputLeftElement,
 	Input,
 	SimpleGrid,
+	Avatar,
 } from '@chakra-ui/react';
 import {
 	AiOutlineAppstore,
@@ -22,8 +23,10 @@ import {
 	AiOutlineBook,
 	AiOutlineDash,
 	AiOutlineArrowRight,
+	AiOutlineLogout,
+	AiOutlineCompass,
 } from 'react-icons/ai';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiGithub, FiMoon, FiSun } from 'react-icons/fi';
 import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
@@ -31,54 +34,19 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
+import { useAuth } from '../hooks/useAuth';
 import MangaCard from '../components/MangaCard';
 import MangaCard2 from '../components/MangaCard2';
 
 const fetcher = (url) => axios(url).then((res) => res.data);
 
-function debounce(func, delay) {
-	let timer = null;
-	return function (...args) {
-		if (timer) clearTimeout(timer);
-		timer = setTimeout(() => {
-			func.apply(this, args);
-		}, delay);
-	};
-}
-
-function Manga({ offset = 0, title = '' }) {
-	const { data: list, error } = useSWR(
-		`/api/manga?includes[]=cover_art&offset=${offset}&title=${title}&limit=10`,
-		fetcher
-	);
-
-	return (
-		<>
-			{list &&
-				list.data.map(({ attributes, relationships, id }) => {
-					const title = attributes.title[Object.keys(attributes.title)[0]];
-					const description =
-						attributes.description[Object.keys(attributes.description)[0]];
-					const coverArt = relationships.filter(
-						(item) => item.type === 'cover_art'
-					)[0];
-					const coverFileName = coverArt.attributes?.fileName;
-
-					return (
-						<MangaCard2
-							mangaID={id}
-							coverFileName={coverFileName}
-							title={title}
-							description={description}
-							key={id}
-						/>
-					);
-				})}
-		</>
-	);
-}
-
 export default function Home({ creatorChoices, discoverData }) {
+	const auth = useAuth();
+	const {
+		isOpen: isSearch,
+		onOpen: onSearch,
+		onClose: onSearchClose,
+	} = useDisclosure();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [title, setTitle] = useState('');
 	const router = useRouter();
@@ -100,6 +68,7 @@ export default function Home({ creatorChoices, discoverData }) {
 				<IconButton
 					icon={<Icon as={AiOutlineAppstore} w="30px" h="30px" />}
 					variant="outline"
+					onClick={onOpen}
 				/>
 			</HStack>
 			<Button
@@ -107,7 +76,7 @@ export default function Home({ creatorChoices, discoverData }) {
 				w="100%"
 				justifyContent="flex-start"
 				h="60px"
-				onClick={onOpen}
+				onClick={onSearch}
 			>
 				<Text color="gray.400">Mieruko-chan...</Text>
 			</Button>
@@ -199,8 +168,61 @@ export default function Home({ creatorChoices, discoverData }) {
 					borderTopRightRadius="15px"
 				/>
 			</SimpleGrid>
+			{/** Modal for menu */}
+			<Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom">
+				<ModalOverlay />
+				<ModalContent>
+					<ModalBody pb="4">
+						<HStack my="4">
+							<Avatar src={auth.user?.photoURL} />
+							{auth.user ? (
+								<HStack justifyContent="space-between" w="100%">
+									<Text fontWeight="semibold" fontSize="xl">
+										{auth.user.displayName}
+									</Text>
+									<Button
+										leftIcon={<Icon as={AiOutlineLogout} />}
+										onClick={() => auth.signout()}
+									>
+										Logout
+									</Button>
+								</HStack>
+							) : (
+								<Button leftIcon={<Icon as={FiGithub} />} onClick={() => auth.signin()}>
+									Login with GitHub
+								</Button>
+							)}
+						</HStack>
+						<Button
+							leftIcon={<Icon as={AiOutlineBook} />}
+							w="100%"
+							justifyContent="flex-start"
+							mb="1"
+						>
+							Library
+						</Button>
+						<Button
+							leftIcon={<Icon as={AiOutlineCompass} />}
+							w="100%"
+							justifyContent="flex-start"
+							mb="1"
+							onClick={() => router.push('/discover?p=1')}
+						>
+							Discover
+						</Button>
+						<Button
+							leftIcon={<Icon as={FiMoon} />}
+							w="100%"
+							justifyContent="flex-start"
+							mb="1"
+						>
+							Dark mode
+						</Button>
+					</ModalBody>
+				</ModalContent>
+			</Modal>
 			{/** Modal for search */}
-			<Modal isOpen={isOpen} onClose={onClose}>
+			<Modal isOpen={isSearch} onClose={onSearchClose} scrollBehavior="inside">
 				<ModalOverlay />
 				<ModalContent>
 					<InputGroup>
@@ -216,13 +238,55 @@ export default function Home({ creatorChoices, discoverData }) {
 						/>
 					</InputGroup>
 					{title.length > 0 && (
-						<ModalBody maxH="70vh" overflow="auto">
+						<ModalBody>
 							<Manga title={title} />
 						</ModalBody>
 					)}
 				</ModalContent>
 			</Modal>
 		</Box>
+	);
+}
+
+function debounce(func, delay) {
+	let timer = null;
+	return function (...args) {
+		if (timer) clearTimeout(timer);
+		timer = setTimeout(() => {
+			func.apply(this, args);
+		}, delay);
+	};
+}
+
+function Manga({ offset = 0, title = '' }) {
+	const { data: list, error } = useSWR(
+		`/api/manga?includes[]=cover_art&offset=${offset}&title=${title}&limit=10`,
+		fetcher
+	);
+
+	return (
+		<>
+			{list &&
+				list.data.map(({ attributes, relationships, id }) => {
+					const title = attributes.title[Object.keys(attributes.title)[0]];
+					const description =
+						attributes.description[Object.keys(attributes.description)[0]];
+					const coverArt = relationships.filter(
+						(item) => item.type === 'cover_art'
+					)[0];
+					const coverFileName = coverArt.attributes?.fileName;
+
+					return (
+						<MangaCard2
+							mangaID={id}
+							coverFileName={coverFileName}
+							title={title}
+							description={description}
+							key={id}
+						/>
+					);
+				})}
+		</>
 	);
 }
 
