@@ -2,9 +2,9 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import {
 	onAuthStateChanged,
 	auth,
-	signInWithPopup,
 	githubProvider,
 	signOut,
+	signInWithRedirect,
 } from '../firebase';
 
 const authContext = createContext();
@@ -23,7 +23,7 @@ function useProvideAuth() {
 	const [error, setError] = useState(null);
 
 	const signin = () => {
-		return signInWithPopup(auth, githubProvider).catch((err) => setError(err));
+		return signInWithRedirect(auth, githubProvider).catch((err) => setError(err));
 	};
 	const signout = () => {
 		return signOut(auth).catch((err) => setError(err));

@@ -70,7 +70,7 @@ function Library() {
 					onClick={onOpen}
 				/>
 			</HStack>
-			<SimpleGrid columns={2} spacingY="2.5">
+			<SimpleGrid columns={2} spacingY="2.5" justifyItems="center">
 				{query.length > 1 && <Manga query={query} />}
 			</SimpleGrid>
 			{/** Bottom Navbar */}

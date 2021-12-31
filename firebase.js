@@ -3,9 +3,9 @@ import { initializeApp } from 'firebase/app';
 import {
 	GithubAuthProvider,
 	getAuth,
-	signInWithPopup,
 	signOut,
 	onAuthStateChanged,
+	signInWithRedirect,
 } from 'firebase/auth';
 import {
 	getFirestore,
@@ -41,11 +41,11 @@ export {
 	db,
 	usersRef,
 	githubProvider,
-	signInWithPopup,
 	signOut,
 	onAuthStateChanged,
 	setDoc,
 	collection,
 	doc,
 	getDoc,
+	signInWithRedirect,
 };
