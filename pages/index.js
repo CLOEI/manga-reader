@@ -25,7 +25,7 @@ import {
 	AiOutlineCompass,
 } from 'react-icons/ai';
 import { FiSearch, FiGithub, FiMoon, FiSun } from 'react-icons/fi';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
 
@@ -35,6 +35,7 @@ import Head from 'next/head';
 import { useAuth } from '../hooks/useAuth';
 import MangaCard from '../components/MangaCard';
 import MangaCard2 from '../components/MangaCard2';
+import MangaCard3 from '../components/MangaCard3';
 import Navbar from '../components/Navbar';
 
 const fetcher = (url) => axios(url).then((res) => res.data);
@@ -173,6 +174,7 @@ export default function Home({ creatorChoices, discoverData }) {
 							w="100%"
 							justifyContent="flex-start"
 							mb="1"
+							h="50px"
 							onClick={() => router.push('/library')}
 							variant="ghost"
 						>
@@ -183,6 +185,7 @@ export default function Home({ creatorChoices, discoverData }) {
 							w="100%"
 							justifyContent="flex-start"
 							mb="1"
+							h="50px"
 							onClick={() => router.push('/discover?p=1')}
 							variant="ghost"
 						>
@@ -195,6 +198,7 @@ export default function Home({ creatorChoices, discoverData }) {
 							w="100%"
 							justifyContent="flex-start"
 							mb="1"
+							h="50px"
 							onClick={() => toggleColorMode()}
 							variant="ghost"
 						>
@@ -251,19 +255,16 @@ function Manga({ offset = 0, title = '' }) {
 			{list &&
 				list.data.map(({ attributes, relationships, id }) => {
 					const title = attributes.title[Object.keys(attributes.title)[0]];
-					const description =
-						attributes.description[Object.keys(attributes.description)[0]];
 					const coverArt = relationships.filter(
 						(item) => item.type === 'cover_art'
 					)[0];
 					const coverFileName = coverArt.attributes?.fileName;
 
 					return (
-						<MangaCard2
+						<MangaCard3
 							mangaID={id}
 							coverFileName={coverFileName}
 							title={title}
-							description={description}
 							key={id}
 						/>
 					);

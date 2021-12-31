@@ -2,7 +2,7 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { ProvideAuth } from '../hooks/useAuth';
 
 const config = {
-	initialColorMode: 'light',
+	initialColorMode: 'dark',
 	useSystemColorMode: false,
 };
 

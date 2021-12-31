@@ -7,7 +7,13 @@ import {
 	signOut,
 	onAuthStateChanged,
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+	getFirestore,
+	setDoc,
+	collection,
+	doc,
+	getDoc,
+} from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,11 +34,18 @@ const githubProvider = new GithubAuthProvider();
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const usersRef = collection(db, 'users');
+
 export {
 	auth,
 	db,
+	usersRef,
 	githubProvider,
 	signInWithPopup,
 	signOut,
 	onAuthStateChanged,
+	setDoc,
+	collection,
+	doc,
+	getDoc,
 };

@@ -10,21 +10,95 @@ import {
 	Divider,
 	useColorModeValue,
 } from '@chakra-ui/react';
-import { AiOutlineArrowLeft, AiOutlineHeart } from 'react-icons/ai';
+import {
+	AiOutlineArrowLeft,
+	AiOutlineHeart,
+	AiFillHeart,
+} from 'react-icons/ai';
+import { useEffect, useState, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Error from 'next/error';
+import Head from 'next/head';
 
+import { db, getDoc, doc, setDoc } from '../firebase';
 import { useAuth } from '../hooks/useAuth';
 import useChapterData from '../hooks/useChapterData';
 import ChapterCard from '../components/ChapterCard';
 
+function debounce(func, delay) {
+	let timer = null;
+	return function (...args) {
+		if (timer) clearTimeout(timer);
+		timer = setTimeout(() => {
+			func.apply(this, args);
+		}, delay);
+	};
+}
+
 function Manga({ data }) {
+	const [inLibrary, setInLibrary] = useState(false);
+	const [allow, setAllow] = useState(false); // allow updating/modifying db
 	const router = useRouter();
 	const auth = useAuth();
 	const query = router.query;
 	const { data: chapterListData, total, error } = useChapterData(query.id);
+
+	useEffect(() => {
+		const data = async () => {
+			if (auth.user) {
+				const docRef = doc(db, 'users', auth.user.uid);
+				const docSnap = await getDoc(docRef);
+
+				if (docSnap.exists()) {
+					const library = docSnap.data().library;
+					if (library.includes(query.id)) setInLibrary(true);
+				} else {
+					await setDoc(docRef, {
+						library: [],
+					});
+				}
+				setAllow(true);
+			}
+		};
+		data();
+	}, [auth.user, query.id]);
+
+	useEffect(() => {
+		const data = async () => {
+			if (auth.user && allow) {
+				const docRef = doc(db, 'users', auth.user.uid);
+				const docSnap = await getDoc(docRef);
+
+				if (docSnap.exists()) {
+					const library = docSnap.data().library;
+
+					if (inLibrary) {
+						if (library.includes(query.id)) return;
+						await setDoc(docRef, {
+							library: [...library, query.id],
+						});
+					} else {
+						const newLibrary = library.filter((item) => item !== query.id);
+						await setDoc(docRef, {
+							library: newLibrary,
+						});
+					}
+				}
+			}
+		};
+		data();
+	}, [inLibrary, auth.user, query.id, allow]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const addToLibrary = useCallback(
+		debounce((e) => {
+			setInLibrary((state) => !state);
+		}, 250),
+		[]
+	);
+
 	if (data.result === 'error' || error) {
 		return <Error statusCode={404} />;
 	}
@@ -42,6 +116,9 @@ function Manga({ data }) {
 
 	return (
 		<Box>
+			<Head>
+				<title>{title}</title>
+			</Head>
 			<Box pos="relative" h="60px">
 				<IconButton
 					icon={<Icon as={AiOutlineArrowLeft} w="25px" h="25px" />}
@@ -85,8 +162,14 @@ function Manga({ data }) {
 					</HStack>
 				</Box>
 				<HStack justifyContent="space-around" h="5rem" my="2.5">
-					<Icon as={AiOutlineHeart} w="3rem" h="3rem" />
-					<Divider orientation="vertical" bgColor="gray.100" />
+					<Icon
+						as={inLibrary ? AiFillHeart : AiOutlineHeart}
+						w="3rem"
+						h="3rem"
+						cursor="pointer"
+						onClick={addToLibrary}
+					/>
+					<Divider orientation="vertical" />
 					<VStack>
 						<Text size="sm" fontWeight="semibold">
 							Chapter
