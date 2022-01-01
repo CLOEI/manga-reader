@@ -5,23 +5,9 @@ import {
 	IconButton,
 	Icon,
 	useDisclosure,
-	Button,
-	Text,
-	Avatar,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalBody,
-	useColorMode,
 	SimpleGrid,
 } from '@chakra-ui/react';
-import {
-	AiOutlineAppstore,
-	AiOutlineLogout,
-	AiOutlineBook,
-	AiOutlineCompass,
-} from 'react-icons/ai';
-import { FiSun, FiMoon, FiGithub } from 'react-icons/fi';
+import { AiOutlineAppstore } from 'react-icons/ai';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
@@ -29,6 +15,7 @@ import { db, doc, getDoc } from '../firebase';
 import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/Navbar';
 import MangaCard from '../components/MangaCard';
+import MenuModal from '../components/MenuModal';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -36,7 +23,6 @@ function Library() {
 	const auth = useAuth();
 	const [query, setQuery] = useState('');
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { colorMode, toggleColorMode } = useColorMode();
 
 	useEffect(() => {
 		const data = async () => {
@@ -76,68 +62,7 @@ function Library() {
 			{/** Bottom Navbar */}
 			<Navbar />
 			{/** Modal for menu */}
-			<Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom">
-				<ModalOverlay />
-				<ModalContent>
-					<ModalBody pb="4">
-						<HStack my="4">
-							<Avatar src={auth.user?.photoURL} />
-							{auth.user ? (
-								<HStack justifyContent="space-between" w="100%">
-									<Text fontWeight="semibold" fontSize="xl">
-										{auth.user.displayName}
-									</Text>
-									<Button
-										leftIcon={<Icon as={AiOutlineLogout} />}
-										onClick={() => auth.signout()}
-									>
-										Logout
-									</Button>
-								</HStack>
-							) : (
-								<Button leftIcon={<Icon as={FiGithub} />} onClick={() => auth.signin()}>
-									Login with GitHub
-								</Button>
-							)}
-						</HStack>
-						<Button
-							leftIcon={<Icon as={AiOutlineBook} />}
-							w="100%"
-							justifyContent="flex-start"
-							mb="1"
-							h="50px"
-							onClick={() => router.push('/library')}
-							variant="ghost"
-						>
-							Library
-						</Button>
-						<Button
-							leftIcon={<Icon as={AiOutlineCompass} />}
-							w="100%"
-							justifyContent="flex-start"
-							mb="1"
-							h="50px"
-							onClick={() => router.push('/discover?p=1')}
-							variant="ghost"
-						>
-							Discover
-						</Button>
-						<Button
-							leftIcon={
-								colorMode === 'dark' ? <Icon as={FiSun} /> : <Icon as={FiMoon} />
-							}
-							w="100%"
-							justifyContent="flex-start"
-							mb="1"
-							h="50px"
-							onClick={() => toggleColorMode()}
-							variant="ghost"
-						>
-							{colorMode === 'dark' ? 'Light' : 'Dark'} mode
-						</Button>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
+			<MenuModal isOpen={isOpen} onClose={onClose} />
 		</Box>
 	);
 }

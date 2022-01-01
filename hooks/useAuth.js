@@ -23,10 +23,14 @@ function useProvideAuth() {
 	const [error, setError] = useState(null);
 
 	const signin = () => {
-		return signInWithRedirect(auth, githubProvider).catch((err) => setError(err));
+		return signInWithRedirect(auth, githubProvider)
+			.then((res) => setUser(res.user))
+			.catch((err) => setError(err));
 	};
 	const signout = () => {
-		return signOut(auth).catch((err) => setError(err));
+		return signOut(auth)
+			.then((res) => setUser(null))
+			.catch((err) => setError(err));
 	};
 
 	useEffect(() => {

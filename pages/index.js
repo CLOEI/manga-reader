@@ -14,41 +14,31 @@ import {
 	InputGroup,
 	InputLeftElement,
 	Input,
-	Avatar,
-	useColorMode,
 } from '@chakra-ui/react';
-import {
-	AiOutlineAppstore,
-	AiOutlineBook,
-	AiOutlineArrowRight,
-	AiOutlineLogout,
-	AiOutlineCompass,
-} from 'react-icons/ai';
-import { FiSearch, FiGithub, FiMoon, FiSun } from 'react-icons/fi';
-import { useCallback, useState, useEffect } from 'react';
+import { AiOutlineAppstore, AiOutlineArrowRight } from 'react-icons/ai';
+import { FiSearch } from 'react-icons/fi';
+import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
 
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import { useAuth } from '../hooks/useAuth';
 import MangaCard from '../components/MangaCard';
 import MangaCard2 from '../components/MangaCard2';
 import MangaCard3 from '../components/MangaCard3';
 import Navbar from '../components/Navbar';
+import MenuModal from '../components/MenuModal';
 
 const fetcher = (url) => axios(url).then((res) => res.data);
 
 export default function Home({ creatorChoices, discoverData }) {
-	const auth = useAuth();
 	const {
 		isOpen: isSearch,
 		onOpen: onSearch,
 		onClose: onSearchClose,
 	} = useDisclosure();
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { colorMode, toggleColorMode } = useColorMode();
 	const [title, setTitle] = useState('');
 	const router = useRouter();
 
@@ -145,68 +135,7 @@ export default function Home({ creatorChoices, discoverData }) {
 			{/** Bottom Navbar */}
 			<Navbar />
 			{/** Modal for menu */}
-			<Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom">
-				<ModalOverlay />
-				<ModalContent>
-					<ModalBody pb="4">
-						<HStack my="4">
-							<Avatar src={auth.user?.photoURL} />
-							{auth.user ? (
-								<HStack justifyContent="space-between" w="100%">
-									<Text fontWeight="semibold" fontSize="xl">
-										{auth.user.displayName}
-									</Text>
-									<Button
-										leftIcon={<Icon as={AiOutlineLogout} />}
-										onClick={() => auth.signout()}
-									>
-										Logout
-									</Button>
-								</HStack>
-							) : (
-								<Button leftIcon={<Icon as={FiGithub} />} onClick={() => auth.signin()}>
-									Login with GitHub
-								</Button>
-							)}
-						</HStack>
-						<Button
-							leftIcon={<Icon as={AiOutlineBook} />}
-							w="100%"
-							justifyContent="flex-start"
-							mb="1"
-							h="50px"
-							onClick={() => router.push('/library')}
-							variant="ghost"
-						>
-							Library
-						</Button>
-						<Button
-							leftIcon={<Icon as={AiOutlineCompass} />}
-							w="100%"
-							justifyContent="flex-start"
-							mb="1"
-							h="50px"
-							onClick={() => router.push('/discover?p=1')}
-							variant="ghost"
-						>
-							Discover
-						</Button>
-						<Button
-							leftIcon={
-								colorMode === 'dark' ? <Icon as={FiSun} /> : <Icon as={FiMoon} />
-							}
-							w="100%"
-							justifyContent="flex-start"
-							mb="1"
-							h="50px"
-							onClick={() => toggleColorMode()}
-							variant="ghost"
-						>
-							{colorMode === 'dark' ? 'Light' : 'Dark'} mode
-						</Button>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
+			<MenuModal isOpen={isOpen} onClose={onClose} />
 			{/** Modal for search */}
 			<Modal isOpen={isSearch} onClose={onSearchClose} scrollBehavior="inside">
 				<ModalOverlay />
