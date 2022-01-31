@@ -6,7 +6,6 @@ import {
 	GoogleAuthProvider,
 	signOut,
 	onAuthStateChanged,
-	User,
 } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -26,11 +25,4 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-export {
-	auth,
-	googleProvider,
-	signInWithPopup,
-	signOut,
-	onAuthStateChanged,
-	User,
-};
+export { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged };

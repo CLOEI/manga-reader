@@ -4,9 +4,9 @@ import {
 	signInWithPopup,
 	signOut,
 	googleProvider,
-	User,
 	onAuthStateChanged,
 } from '../firebase';
+import type { User } from 'firebase/auth';
 
 type AuthContextType = {
 	user: User | false | null;
