@@ -7,7 +7,7 @@ declare class Manga {
 	status: string;
 	description: { [x: string]: string };
 	fileName: string | undefined;
-	author: string | undefined;
+	author?: string | undefined;
 
 	constructor(context: { [x: string]: string });
 
