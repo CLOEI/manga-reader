@@ -8,7 +8,7 @@ import useSWR from 'swr';
 import classNames from 'classnames';
 
 import { useRouter } from 'next/router';
-import { GetServerSidePropsContext, GetServerSideProps } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Error from 'next/error';
