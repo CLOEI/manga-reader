@@ -57,7 +57,7 @@ function Other() {
 					</button>
 				) : (
 					<button
-						className="flex px-2 py-4 hover:bg-gray-50 w-full"
+						className="flex px-2 py-4 hover:bg-gray-600 w-full"
 						onClick={() => auth.login()}
 					>
 						<AiOutlineUser size={24} />

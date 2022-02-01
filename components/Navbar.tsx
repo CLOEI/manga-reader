@@ -48,7 +48,7 @@ function Navbar() {
 
 	return (
 		<nav
-			className="grid absolute grid-cols-4 bottom-0 right-0 left-0 bg-gray-700 pt-1 transition-all duration-700"
+			className="grid absolute grid-cols-4 bottom-0 right-0 left-0 bg-gray-800 text-gray-300 pt-1 transition-all duration-700"
 			ref={navbar}
 		>
 			<button

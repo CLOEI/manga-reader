@@ -34,7 +34,7 @@ function Discover() {
 				</button>
 				<AiOutlineSearch size={24} />
 			</header>
-			<main className="grid grid-cols-2 gap-2 p-2">
+			<main className="grid grid-cols-2 gap-2 p-2 md:grid-cols-3 lg:grid-cols-5">
 				{data &&
 					data.data.map((context) => {
 						const manga = new Manga(context);

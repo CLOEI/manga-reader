@@ -8,11 +8,13 @@ import useSWR from 'swr';
 import classNames from 'classnames';
 
 import { useRouter } from 'next/router';
-import { GetServerSidePropsContext, GetServerSideProps } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Error from 'next/error';
 
+import { getDoc, db, doc, setDoc } from '../../firebase';
+import { useAuth } from '../../hooks/useAuth';
 import Manga from '../../utils/Manga';
 import Layout from '../../components/Layout';
 import ChapterCard from '../../components/ChapterCard';
@@ -23,11 +25,13 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function MangaPage({ data }: any) {
 	if (data.result === 'error') return <Error statusCode={404} />;
+	const manga = new Manga(data.data);
+	const auth = useAuth();
 	const router = useRouter();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showMore, setShowMore] = useState(false);
-	const manga = new Manga(data.data);
-	const { data: chapterData, error } = useSWR(
+	const [inLibrary, setInLibrary] = useState(false);
+	const { data: chapterData } = useSWR(
 		`/api/chapter?manga=${
 			manga.id
 		}&translatedLanguage[]=en&limit=50&includes[]=scanlation_group&offset=${
@@ -36,11 +40,59 @@ function MangaPage({ data }: any) {
 		fetcher
 	);
 
+	useEffect(() => {
+		if (auth.user) {
+			const userRef = doc(db, 'users', auth.user.uid);
+			getDoc(userRef).then((user) => {
+				if (user.exists()) {
+					const library = user.data().library;
+					if (library.includes(manga.id)) {
+						setInLibrary(true);
+					}
+				}
+			});
+		}
+	}, [auth.user]);
+
 	const goBack = () => {
 		router.back();
 	};
 
-	const addToFav = () => {};
+	const addToFav = async () => {
+		if (auth.user) {
+			const userRef = doc(db, 'users', auth.user.uid);
+			const user = await getDoc(userRef);
+			if (user.exists()) {
+				const library = user.data().library;
+				if (inLibrary) {
+					const newLibrary = library.filter((id: string) => id !== manga.id);
+					setDoc(
+						userRef,
+						{
+							library: newLibrary,
+						},
+						{ merge: true }
+					);
+				} else {
+					if (library.includes(manga.id)) return; // Don't add if already in library
+					setDoc(
+						userRef,
+						{
+							library: [...library, manga.id],
+						},
+						{ merge: true }
+					);
+				}
+			} else {
+				setDoc(userRef, {
+					library: [manga.id],
+				});
+			}
+			setInLibrary(!inLibrary);
+		} else {
+			setInLibrary(!inLibrary);
+		}
+	};
 
 	const onPageChange = (page: number) => {
 		setCurrentPage(page);
@@ -83,7 +135,7 @@ function MangaPage({ data }: any) {
 						className="inline-flex w-full flex-col items-center"
 						onClick={addToFav}
 					>
-						<AiOutlineHeart size={56} />
+						{!inLibrary ? <AiOutlineHeart size={56} /> : <AiFillHeart size={56} />}
 						<span>Add to library</span>
 					</button>
 				</div>

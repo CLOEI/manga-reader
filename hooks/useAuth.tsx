@@ -5,8 +5,8 @@ import {
 	signOut,
 	googleProvider,
 	onAuthStateChanged,
+	User,
 } from '../firebase';
-import type { User } from 'firebase/auth';
 
 type AuthContextType = {
 	user: User | false | null;
