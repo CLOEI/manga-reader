@@ -6,7 +6,16 @@ import {
 	GoogleAuthProvider,
 	signOut,
 	onAuthStateChanged,
+	User,
 } from 'firebase/auth';
+import {
+	getFirestore,
+	doc,
+	setDoc,
+	getDoc,
+	collection,
+	updateDoc,
+} from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,6 +32,20 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged };
+export {
+	auth,
+	googleProvider,
+	signInWithPopup,
+	signOut,
+	onAuthStateChanged,
+	db,
+	doc,
+	setDoc,
+	getDoc,
+	collection,
+	updateDoc,
+};
+export type { User };
