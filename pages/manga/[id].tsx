@@ -4,11 +4,13 @@ import {
 	AiOutlineHeart,
 	AiFillHeart,
 } from 'react-icons/ai';
+import Skeleton from 'react-loading-skeleton';
 import useSWR from 'swr';
 import classNames from 'classnames';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
 import Error from 'next/error';
@@ -28,6 +30,7 @@ function MangaPage({ data }: any) {
 	const manga = new Manga(data.data);
 	const auth = useAuth();
 	const router = useRouter();
+	const [coverLoaded, setCoverLoaded] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showMore, setShowMore] = useState(false);
 	const [inLibrary, setInLibrary] = useState(false);
@@ -118,9 +121,18 @@ function MangaPage({ data }: any) {
 					></div>
 				</div>
 				<div className="relative pb-[142%]" style={{ gridArea: 'cover' }}>
+					{!coverLoaded && (
+						<Skeleton
+							baseColor="rgb(31 41 55)"
+							highlightColor="rgb(17 24 39)"
+							className="h-full"
+							containerClassName="absolute w-full h-full"
+						/>
+					)}
 					<Image
 						src={`https://uploads.mangadex.org/covers/${manga.id}/${manga.fileName}`}
 						layout="fill"
+						onLoadingComplete={() => setCoverLoaded(true)}
 					/>
 				</div>
 				<div style={{ gridArea: 'title' }}>
@@ -143,6 +155,7 @@ function MangaPage({ data }: any) {
 					<div>
 						<p
 							className={classNames({
+								'break-all': true,
 								'line-clamp-5': !showMore,
 							})}
 						>
@@ -173,12 +186,20 @@ function MangaPage({ data }: any) {
 						Total {chapterData?.total || 0} chapter
 					</p>
 					<ul>
-						{chapterData &&
+						{chapterData ? (
 							chapterData.data.map((data: any) => {
 								const chapter = new MangaChapter(data);
 
 								return <ChapterCard mangaChapter={chapter} key={chapter.id} />;
-							})}
+							})
+						) : (
+							<Skeleton
+								count={3}
+								baseColor="rgb(31 41 55)"
+								highlightColor="rgb(17 24 39)"
+								height={40}
+							/>
+						)}
 					</ul>
 					{chapterData?.total && (
 						<Pagination
