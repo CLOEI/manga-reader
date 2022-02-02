@@ -14,9 +14,12 @@ import Manga from '../utils/Manga';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
-	const [IDS, setIDS] = useState('');
+	const [IDS, setIDS] = useState<string | false>(false);
 	const auth = useAuth();
-	const { data } = useSWR(`/api/manga?${IDS}&includes[]=cover_art`, fetcher);
+	const { data } = useSWR(
+		IDS ? `/api/manga?${IDS}&includes[]=cover_art` : null,
+		fetcher
+	);
 
 	useEffect(() => {
 		if (auth.user) {

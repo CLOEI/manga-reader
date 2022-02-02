@@ -7,31 +7,11 @@ import {
 	AiFillSetting,
 	AiOutlineEllipsis,
 } from 'react-icons/ai';
-import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/router';
 
 function Navbar() {
-	const navbar = useRef<HTMLDivElement>(null);
 	const router = useRouter();
-
-	useEffect(() => {
-		window.onscroll = () => {
-			const pageOffset = window.scrollY;
-
-			if (pageOffset > 20 && navbar.current) {
-				navbar.current.style.bottom = '-100%';
-				navbar.current.style.visibility = 'hidden';
-			} else if (navbar.current) {
-				navbar.current.style.bottom = '0';
-				navbar.current.style.visibility = 'visible';
-			}
-		};
-
-		return () => {
-			window.onscroll = null;
-		};
-	}, []);
 
 	const library = () => {
 		router.push('/');
@@ -47,10 +27,7 @@ function Navbar() {
 	};
 
 	return (
-		<nav
-			className="grid absolute grid-cols-4 bottom-0 right-0 left-0 bg-gray-800 text-gray-300 pt-1 transition-all duration-700"
-			ref={navbar}
-		>
+		<nav className="grid absolute grid-cols-4 bottom-0 right-0 left-0 bg-gray-800 text-gray-300 pt-1 transition-all duration-700 ease-in-out z-[999]">
 			<button
 				className="flex items-center justify-center flex-col py-2"
 				onClick={library}

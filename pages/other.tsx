@@ -37,9 +37,7 @@ function Other() {
 									layout="fill"
 								/>
 							</div>
-							<p className="text-2xl my-3">
-								<span className=" font-light">0</span> In Library
-							</p>
+							<p className="text-2xl my-3 text-center">{auth.user.displayName}</p>
 						</div>
 					) : (
 						<h2 className="font-bold text-4xl">Manga</h2>
