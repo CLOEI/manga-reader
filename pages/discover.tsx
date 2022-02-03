@@ -1,6 +1,7 @@
 import { AiOutlineArrowLeft, AiOutlineSearch } from 'react-icons/ai';
-import { useState, useRef } from 'react';
-import useSWR from 'swr';
+import { useState, useRef, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import useSWRInfinite from 'swr/infinite';
 
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -16,10 +17,19 @@ function Discover() {
 	const search = router.query.q || '';
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [searchToggled, setSearchToggled] = useState(false);
-	const { data, error } = useSWR<IMangaList>(
-		`/api/manga?includes[]=cover_art&title=${search}`,
-		fetcher
-	);
+	const [ref, inView] = useInView({
+		triggerOnce: true,
+	});
+	const { data, setSize, size } = useSWRInfinite((index, previousPageData) => {
+		if (previousPageData && !previousPageData?.data) return null;
+		return `/api/manga?includes[]=cover_art&title=${search}&offset=${index * 10}`;
+	}, fetcher);
+
+	useEffect(() => {
+		if (inView) {
+			setSize(size + 1);
+		}
+	}, [inView]);
 
 	const goBack = () => {
 		router.replace('/');
@@ -58,10 +68,14 @@ function Discover() {
 			</header>
 			<main className="grid grid-cols-2 gap-2 p-2 md:grid-cols-3 lg:grid-cols-5">
 				{data &&
-					data.data.map((context) => {
-						const manga = new Manga(context);
-
-						return <MangaCard key={manga.id} manga={manga} />;
+					data.map((mangaList) => {
+						return mangaList.data.map((data: any, i: number) => {
+							const manga = new Manga(data);
+							if (i === 9) {
+								return <MangaCard key={manga.id} manga={manga} ref={ref} />;
+							}
+							return <MangaCard key={manga.id} manga={manga} />;
+						});
 					})}
 			</main>
 		</Layout>
