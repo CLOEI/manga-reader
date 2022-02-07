@@ -5,13 +5,19 @@ interface Props {
 	currentPage: number;
 	totalPages: number;
 	onPageChange: (page: number) => void;
+	containerClassName?: string;
 }
 const range = (start: number, end: number) => {
 	const length = end - start + 1;
 	return Array.from({ length }, (_, i) => i + start);
 };
 
-const Index = ({ currentPage, totalPages, onPageChange }: Props) => {
+const Index = ({
+	currentPage,
+	totalPages,
+	onPageChange,
+	containerClassName,
+}: Props) => {
 	const paginationRange = useMemo(() => {
 		const maxPage = 5;
 
@@ -34,10 +40,10 @@ const Index = ({ currentPage, totalPages, onPageChange }: Props) => {
 	}, [currentPage, totalPages]);
 
 	const onNext = () => {
-		onPageChange(currentPage + 1);
+		onPageChange(totalPages);
 	};
 	const onPrevious = () => {
-		onPageChange(currentPage - 1);
+		onPageChange(1);
 	};
 
 	const disableNext = classNames({
@@ -48,7 +54,7 @@ const Index = ({ currentPage, totalPages, onPageChange }: Props) => {
 	});
 
 	return (
-		<div>
+		<div className={containerClassName}>
 			<div className="mx-auto container py-10">
 				<ul className="flex justify-center items-center">
 					<li onClick={onPrevious} className={disablePrevious}>

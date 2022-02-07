@@ -6,8 +6,8 @@ import {
 } from 'react-icons/ai';
 import Skeleton from 'react-loading-skeleton';
 import useSWR from 'swr';
+import ReactMarkdown from 'react-markdown';
 import classNames from 'classnames';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
@@ -152,21 +152,16 @@ function MangaPage({ data }: any) {
 					</button>
 				</div>
 				<div style={{ gridArea: 'desc' }}>
-					<div>
-						<p
-							className={classNames({
-								'break-all': true,
-								'line-clamp-5': !showMore,
-							})}
-						>
-							{manga.desc}
-						</p>
-						<span
-							className="text-indigo-600 hover:underline"
-							onClick={() => setShowMore((state) => !state)}
-						>
-							{showMore ? 'Show less...' : 'Show more...'}
-						</span>
+					<div className="mb-4">
+						<ReactMarkdown
+							children={manga.desc}
+							components={{
+								hr: () => <hr className="my-2" />,
+								a: ({ node, ...props }) => (
+									<a target="_blank" rel="noopener noreferrer" {...props} />
+								),
+							}}
+						/>
 					</div>
 					<ul className="my-2">
 						{manga.tags.map((tag, i) => {
@@ -185,7 +180,7 @@ function MangaPage({ data }: any) {
 					<p className="text-xl font-semi mb-5">
 						Total {chapterData?.total || 0} chapter
 					</p>
-					<ul>
+					<div>
 						{chapterData ? (
 							chapterData.data.map((data: any) => {
 								const chapter = new MangaChapter(data);
@@ -200,7 +195,7 @@ function MangaPage({ data }: any) {
 								height={40}
 							/>
 						)}
-					</ul>
+					</div>
 					{chapterData?.total && (
 						<Pagination
 							currentPage={currentPage}

@@ -1,6 +1,5 @@
 import { useState, forwardRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -21,7 +20,7 @@ const MangaCard = forwardRef<HTMLAnchorElement, MangaCardProps>(
 							<Skeleton
 								baseColor="rgb(55 65 81)"
 								highlightColor="rgb(31 41 55)"
-								className="h-full"
+								className="absolute h-full"
 								containerClassName="absolute w-full h-full"
 							/>
 						)}

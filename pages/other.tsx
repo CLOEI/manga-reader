@@ -1,4 +1,6 @@
 import { AiOutlineUser } from 'react-icons/ai';
+import { useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 import Head from 'next/head';
 import Image from 'next/image';
@@ -9,6 +11,7 @@ import Layout from '../components/Layout';
 
 function Other() {
 	const auth = useAuth();
+	const [loaded, setLoaded] = useState(false);
 
 	if (auth.user === null)
 		return (
@@ -16,7 +19,6 @@ function Other() {
 				<title>Other</title>
 			</head>
 		);
-	console.log(auth.user);
 
 	return (
 		<Layout>
@@ -31,10 +33,19 @@ function Other() {
 					{auth.user ? (
 						<div>
 							<div className="relative w-24 h-24 rounded-full overflow-hidden mx-auto">
+								{!loaded && (
+									<Skeleton
+										baseColor="rgb(55 65 81)"
+										highlightColor="rgb(31 41 55)"
+										className="h-full"
+										circle={true}
+									/>
+								)}
 								<Image
 									src={auth.user.photoURL!}
 									alt={auth.user.displayName!}
 									layout="fill"
+									onLoadingComplete={() => setLoaded(true)}
 								/>
 							</div>
 							<p className="text-2xl my-3 text-center">{auth.user.displayName}</p>

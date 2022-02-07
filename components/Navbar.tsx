@@ -26,6 +26,9 @@ function Navbar() {
 				}
 			}
 		};
+		return () => {
+			window.onscroll = null;
+		};
 	}, [navRef.current]);
 
 	const library = () => {
