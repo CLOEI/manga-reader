@@ -43,7 +43,7 @@ export default function Home() {
 				<h1 className="font-bold text-xl">Library</h1>
 				<AiOutlineSearch size={24} />
 			</header>
-			<main className="grid grid-cols-2 gap-2 p-2 md:grid-cols-3 lg:grid-cols-5">
+			<main className="grid grid-cols-2 gap-2 p-2 md:grid-cols-3 lg:grid-cols-5 pb-12">
 				{data?.data?.map((data: any) => {
 					const manga = new Manga(data);
 					return <MangaCard key={manga.id} manga={manga} />;

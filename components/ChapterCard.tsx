@@ -1,13 +1,15 @@
 import React from 'react';
 
+import Link from 'next/link';
+
 interface Props {
 	mangaChapter: MangaChapter;
 }
 
 function ChapterCard({ mangaChapter }: Props) {
 	return (
-		<li className="px-2 py-3 bg-gray-800 mb-1">
-			<p>
+		<Link href={`/read/${mangaChapter.id}`}>
+			<a className="px-2 py-3 bg-gray-800 mb-1 block">
 				{mangaChapter?.volume
 					? mangaChapter?.title
 						? `Vol.${mangaChapter.volume} Ch.${mangaChapter.chapter} - ${mangaChapter.title}`
@@ -15,13 +17,13 @@ function ChapterCard({ mangaChapter }: Props) {
 					: mangaChapter?.title
 					? `Ch.${mangaChapter.chapter} - ${mangaChapter.title}`
 					: `Ch.${mangaChapter?.chapter}`}
-			</p>
-			{/* <p>
+				{/* <p>
 				{scanlation
 					? `${format(new Date(date), 'dd-MM-yy')} • ${scanlation}`
 					: `${format(new Date(date), 'dd-MM-yy')}`}
-			</p> */}
-		</li>
+        </p> */}
+			</a>
+		</Link>
 	);
 }
 
