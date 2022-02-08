@@ -3,6 +3,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { useState } from 'react';
 
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import Head from 'next/head';
 
 import Layout from '../../components/Layout';
@@ -35,23 +36,17 @@ function Read({ baseData, chapterData }: Props) {
 			<Head>
 				<title>Read</title>
 			</Head>
-			<header className="absolute top-0 left-0 w-full bg-gray-800 h-12 px-2 flex items-center justify-between z-10">
+			<header className="sticky top-0 left-0 w-full bg-gray-800 h-12 px-2 flex items-center justify-between z-10">
 				<button onClick={goBack}>
 					<AiOutlineArrowLeft size={24} />
 				</button>
 			</header>
-			<div className="flex h-screen items-center">
-				<div className="relative">
-					<img
-						src={`${chapterBaseUrl}/data/${chapterHash}/${quality[currentPage - 1]}`}
-					/>
-				</div>
-				<Pagination
-					currentPage={currentPage}
-					totalPages={quality.length}
-					onPageChange={onPageChange}
-					containerClassName="absolute bottom-0 right-1/2 translate-x-1/2"
-				/>
+			<div className="flex flex-col mt-10 items-center">
+				{quality.map((fileName: string, i: number) => {
+					return (
+						<img src={`${chapterBaseUrl}/data/${chapterHash}/${fileName}`} key={i} />
+					);
+				})}
 			</div>
 		</Layout>
 	);
