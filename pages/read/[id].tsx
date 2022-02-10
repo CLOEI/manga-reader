@@ -1,13 +1,16 @@
+import { useState, useEffect, useRef } from 'react';
 import { GetServerSidePropsContext } from 'next';
-import { AiOutlineArrowLeft } from 'react-icons/ai';
-import { useState } from 'react';
+import {
+	AiOutlineArrowLeft,
+	AiOutlineArrowUp,
+	AiFillCaretLeft,
+	AiFillCaretRight,
+} from 'react-icons/ai';
 
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import Head from 'next/head';
 
 import Layout from '../../components/Layout';
-import Pagination from '../../components/Pagination';
 
 type Props = {
 	baseData: any;
@@ -16,19 +19,46 @@ type Props = {
 
 function Read({ baseData, chapterData }: Props) {
 	const router = useRouter();
-	const [currentPage, setCurrentPage] = useState(1);
+	const navRef = useRef<HTMLDivElement>(null);
+	const lastNum = useRef(0);
 	const chapterBaseUrl = baseData.baseUrl;
 	const chapterHash = baseData.chapter.hash;
 	const quality = baseData.chapter['data'];
 
-	console.log(chapterData);
+	useEffect(() => {
+		lastNum.current = window.scrollY;
+		window.onscroll = () => {
+			if (navRef.current) {
+				const pageY = window.scrollY;
+				if (pageY > lastNum.current) {
+					navRef.current.style.display = 'none';
+				} else {
+					navRef.current.style.display = 'flex';
+				}
+				lastNum.current = window.scrollY;
+			}
+		};
+		return () => {
+			window.onscroll = null;
+		};
+	}, []);
 
-	const onPageChange = (page: number) => {
-		setCurrentPage(page);
-	};
+	console.log(chapterData);
 
 	const goBack = () => {
 		router.back();
+	};
+	const goUP = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth',
+		});
+	};
+	const nextChapter = () => {
+		return;
+	};
+	const preChapter = () => {
+		return;
 	};
 
 	return (
@@ -36,17 +66,40 @@ function Read({ baseData, chapterData }: Props) {
 			<Head>
 				<title>Read</title>
 			</Head>
-			<header className="sticky top-0 left-0 w-full bg-gray-800 h-12 px-2 flex items-center justify-between z-10">
+			<header
+				className="flex fixed top-0 w-full bg-gray-800 h-12 px-2 items-center justify-between z-10"
+				ref={navRef}
+			>
 				<button onClick={goBack}>
 					<AiOutlineArrowLeft size={24} />
 				</button>
+				<div>
+					<div className="flex items-center">
+						<button onClick={preChapter}>
+							<AiFillCaretLeft size={24} />
+						</button>
+						<p className="font-semibold mx-3">Ch. 0</p>
+						<button onClick={nextChapter}>
+							<AiFillCaretRight size={24} />
+						</button>
+					</div>
+				</div>
 			</header>
-			<div className="flex flex-col mt-10 items-center">
+			<main className="flex flex-col mt-14 items-center">
 				{quality.map((fileName: string, i: number) => {
 					return (
 						<img src={`${chapterBaseUrl}/data/${chapterHash}/${fileName}`} key={i} />
 					);
 				})}
+				<div className="flex items-center justify-center w-full h-20 bg-gray-50 text-gray-900">
+					<p className="font-semibold">Made with ❤️️ by Cendy powered by MangaDex</p>
+				</div>
+			</main>
+			<div
+				className="fixed bottom-4 right-4 w-16 h-16 bg-slate-200 rounded-lg text-gray-700 flex justify-center items-center"
+				onClick={goUP}
+			>
+				<AiOutlineArrowUp size={36} />
 			</div>
 		</Layout>
 	);

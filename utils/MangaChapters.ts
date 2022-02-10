@@ -1,4 +1,4 @@
-class MangaChapter {
+class MangaChapters {
 	id: string;
 	createdAt: string;
 	title?: string;
@@ -15,4 +15,4 @@ class MangaChapter {
 	}
 }
 
-export default MangaChapter;
+export default MangaChapters;

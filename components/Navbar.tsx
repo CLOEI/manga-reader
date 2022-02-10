@@ -14,22 +14,25 @@ import { useRouter } from 'next/router';
 function Navbar() {
 	const router = useRouter();
 	const navRef = useRef<HTMLDivElement>(null);
+	const lastNum = useRef(0);
 
 	useEffect(() => {
+		lastNum.current = window.scrollY;
 		window.onscroll = () => {
 			if (navRef.current) {
-				const pageY = window.pageYOffset;
-				if (pageY > 0) {
+				const pageY = window.scrollY;
+				if (pageY > lastNum.current) {
 					navRef.current.style.display = 'none';
 				} else {
 					navRef.current.style.display = 'grid';
 				}
+				lastNum.current = window.scrollY;
 			}
 		};
 		return () => {
 			window.onscroll = null;
 		};
-	}, [navRef.current]);
+	}, []); // we don't need any dependency.
 
 	const library = () => {
 		router.push('/');

@@ -7,7 +7,6 @@ import {
 import Skeleton from 'react-loading-skeleton';
 import useSWR from 'swr';
 import ReactMarkdown from 'react-markdown';
-import classNames from 'classnames';
 
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
@@ -21,7 +20,7 @@ import Manga from '../../utils/Manga';
 import Layout from '../../components/Layout';
 import ChapterCard from '../../components/ChapterCard';
 import Pagination from '../../components/Pagination';
-import MangaChapter from '../../utils/MangaChapter';
+import MangaChapters from '../../utils/MangaChapters';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -32,7 +31,6 @@ function MangaPage({ data }: any) {
 	const router = useRouter();
 	const [coverLoaded, setCoverLoaded] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [showMore, setShowMore] = useState(false);
 	const [inLibrary, setInLibrary] = useState(false);
 	const { data: chapterData } = useSWR(
 		`/api/chapter?manga=${
@@ -183,7 +181,7 @@ function MangaPage({ data }: any) {
 					<div>
 						{chapterData ? (
 							chapterData.data.map((data: any) => {
-								const chapter = new MangaChapter(data);
+								const chapter = new MangaChapters(data);
 
 								return <ChapterCard mangaChapter={chapter} key={chapter.id} />;
 							})
