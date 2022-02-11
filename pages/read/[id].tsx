@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 import Layout from '../../components/Layout';
+import MangaChapter from '../../utils/MangaChapter';
 
 type Props = {
 	baseData: any;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 function Read({ baseData, chapterData }: Props) {
+	const chapter = new MangaChapter(chapterData.data);
 	const router = useRouter();
 	const navRef = useRef<HTMLDivElement>(null);
 	const lastNum = useRef(0);
@@ -43,8 +45,6 @@ function Read({ baseData, chapterData }: Props) {
 		};
 	}, []);
 
-	console.log(chapterData);
-
 	const goBack = () => {
 		router.back();
 	};
@@ -54,6 +54,10 @@ function Read({ baseData, chapterData }: Props) {
 			behavior: 'smooth',
 		});
 	};
+
+	/*
+    TODO: Implement a button that can go to next/previous chapter.
+  */
 	const nextChapter = () => {
 		return;
 	};
@@ -64,7 +68,7 @@ function Read({ baseData, chapterData }: Props) {
 	return (
 		<Layout>
 			<Head>
-				<title>Read</title>
+				<title>{chapter.title}</title>
 			</Head>
 			<header
 				className="flex fixed top-0 w-full bg-gray-800 h-12 px-2 items-center justify-between z-10"
@@ -75,13 +79,7 @@ function Read({ baseData, chapterData }: Props) {
 				</button>
 				<div>
 					<div className="flex items-center">
-						<button onClick={preChapter}>
-							<AiFillCaretLeft size={24} />
-						</button>
-						<p className="font-semibold mx-3">Ch. 0</p>
-						<button onClick={nextChapter}>
-							<AiFillCaretRight size={24} />
-						</button>
+						<p className="font-semibold mx-3">{chapter.title}</p>
 					</div>
 				</div>
 			</header>

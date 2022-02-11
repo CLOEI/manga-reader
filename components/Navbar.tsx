@@ -62,6 +62,7 @@ function Navbar() {
 			<button
 				className="flex items-center justify-center flex-col py-2"
 				onClick={history}
+				disabled
 			>
 				<AiOutlineHistory size={24} />
 				<p>History</p>
