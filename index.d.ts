@@ -15,7 +15,7 @@ declare class Manga {
 	get desc(): string;
 }
 
-declare class MangaChapter {
+declare class MangaChapters {
 	id: string;
 	createdAt: string;
 	title?: string;

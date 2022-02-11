@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 
 interface Props {
-	mangaChapter: MangaChapter;
+	mangaChapter: MangaChapters;
 }
 
 function ChapterCard({ mangaChapter }: Props) {

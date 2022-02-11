@@ -1,17 +1,19 @@
 class MangaChapter {
 	id: string;
-	createdAt: string;
-	title?: string;
-	volume?: string;
-	chapter?: string;
+	attributes: { [x: string]: string };
+	relationships: [{ [x: string]: string }];
 
 	constructor(data: any) {
-		const { attributes, relationships, id } = data;
-		this.id = id;
-		this.chapter = attributes.chapter;
-		this.title = attributes.title;
-		this.createdAt = attributes.createdAt;
-		this.volume = attributes.volume;
+		this.id = data.id;
+		this.attributes = data.attributes;
+		this.relationships = data.relationships;
+	}
+
+	get title() {
+		return `Vol. ${this.attributes.volume || '?'} Ch. ${this.attributes.chapter}`;
+	}
+	mangaID() {
+		return this.relationships.filter((obj) => obj.type === 'manga')[0].id;
 	}
 }
 

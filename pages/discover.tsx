@@ -22,7 +22,9 @@ function Discover() {
 	});
 	const { data, setSize, size } = useSWRInfinite((index, previousPageData) => {
 		if (previousPageData && !previousPageData?.data) return null;
-		return `/api/manga?includes[]=cover_art&title=${search}&offset=${index * 10}`;
+		return `/api/manga?includes[]=cover_art&title=${search}&offset=${
+			index * 20
+		}&limit=20`;
 	}, fetcher);
 
 	useEffect(() => {
@@ -71,7 +73,7 @@ function Discover() {
 					data.map((mangaList) => {
 						return mangaList.data.map((data: any, i: number) => {
 							const manga = new Manga(data);
-							if (i === 9) {
+							if (i === 19) {
 								return <MangaCard key={manga.id} manga={manga} ref={ref} />;
 							}
 							return <MangaCard key={manga.id} manga={manga} />;
