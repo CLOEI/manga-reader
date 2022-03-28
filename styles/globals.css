@@ -2,26 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-	background-color: rgb(17 24 39);
+@layer components {
+	.text-high {
+		@apply text-dark-00dp opacity-[87%] dark:text-white;
+	}
+	.text-medium {
+		@apply text-dark-00dp opacity-[60%] dark:text-white;
+	}
+	.text-disabled {
+		@apply text-dark-00dp opacity-[38%] dark:text-white;
+	}
 }
 
-.info-container {
-	display: grid;
-	position: relative;
-	grid-template-columns: 100px auto;
-	grid-template-areas:
-		'cover title'
-		'cover info'
-		'buttons buttons'
-		'desc desc'
-		'content content';
-	column-gap: 1rem;
-	row-gap: 0.75em;
+@layer utilities {
+	.clip-image {
+		clip-path: inset(0 0);
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		@apply hidden;
+	}
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
 }
 
-.clip {
-	clip: rect(0, auto, auto, 0);
-	-webkit-clip-path: inset(0, 0);
-	clip-path: inset(0 0);
+.dark {
+	@apply bg-dark-00dp;
 }

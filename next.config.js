@@ -1,15 +1,17 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const nextConfig = {
 	reactStrictMode: true,
 	images: {
-		domains: ['uploads.mangadex.org', 'lh3.googleusercontent.com'],
+		domains: ['uploads.mangadex.org'],
 	},
 	async rewrites() {
 		return [
 			{
-				source: '/api/:x*',
-				destination: 'https://api.mangadex.org/:x*',
+				source: '/api/:path*',
+				destination: 'https://api.mangadex.org/:path*',
 			},
 		];
 	},
 };
+
+module.exports = nextConfig;
