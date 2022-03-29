@@ -15,6 +15,7 @@ import Readmore from '../../components/Readmore';
 import Chapter from '../../components/Chapter';
 import Tag from '../../components/Tag';
 import Pagination from '../../components/Pagination';
+import ChapterList from '../../components/ChapterList';
 
 const PREFFERED_LANG = 'en';
 
@@ -33,20 +34,11 @@ function Content({ manga }) {
 	);
 	const [pageIndex, setPageIndex] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false);
-	const { data: chapterList, error } = useSWR(
-		`/api/chapter?manga=${id}&translatedLanguage[]=${language}&order[volume]=desc&order[chapter]=desc&offset=${
-			pageIndex * 10
-		}`
-	);
 	const router = useRouter();
 
 	const goBack = () => router.back();
 	const toggleFav = () => setIsFavorite(!isFavorite);
 	const setIndex = (index) => setPageIndex(index);
-
-	if (error) {
-		console.log(error);
-	}
 
 	return (
 		<div>
@@ -113,18 +105,22 @@ function Content({ manga }) {
 					})}
 				</div>
 				<div className="grid-in-chapter">
-					<h2 className="text-high mb-2">
-						Chapters : {chapterList ? chapterList.total : 0}
-					</h2>
-					{chapterList && (
-						<>
-							{chapterList.data.map((data) => {
-								const chapterData = extractChapterData(data);
-								return <Chapter data={chapterData} key={chapterData.id} />;
-							})}
-							<Pagination totalPage={chapterList.total} onClick={setIndex} />
-						</>
-					)}
+					<ChapterList
+						id={id}
+						pageIndex={pageIndex}
+						language={language}
+						setIndex={setIndex}
+					/>
+					{/* Used for pre-fetch */}
+					<div className="hidden">
+						<ChapterList
+							id={id}
+							pageIndex={pageIndex + 1}
+							language={language}
+							setIndex={setIndex}
+							className="hidden"
+						/>
+					</div>
 				</div>
 			</main>
 		</div>

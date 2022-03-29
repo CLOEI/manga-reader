@@ -32,6 +32,7 @@ function extractData(manga, PREFFERED_LANG) {
 		tags,
 		coverURL,
 		id,
+		availableTranslatedLanguages,
 		language:
 			availableTranslatedLanguages.indexOf(PREFFERED_LANG) > -1
 				? PREFFERED_LANG

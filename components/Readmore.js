@@ -9,7 +9,8 @@ function Readmore({ children }) {
 
 	useEffect(() => {
 		const height = paragraphRef.current.offsetHeight;
-		if (height / 24 >= 7) {
+		// 24 is the line height. dividing it by 24 gives you the number of lines.
+		if (height / 24 >= 5) {
 			setCollapse(true);
 			setShowButton(true);
 		} else {
