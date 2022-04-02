@@ -29,4 +29,7 @@
 
 .dark {
 	@apply bg-dark-00dp;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
 }

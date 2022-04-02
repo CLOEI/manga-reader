@@ -1,6 +1,6 @@
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { BsGlobe, BsHeart, BsHeartFill } from 'react-icons/bs';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import useSWR from 'swr';
 
 import { useRouter } from 'next/router';
@@ -8,13 +8,11 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Error from 'next/error';
 
-import extractChapterData from '../../utils/extractChapterData';
+import useLocalStorage from '../../utils/useLocalStorage';
 import extractMangaData from '../../utils/extractMangaData';
 import mangaStatus from '../../constants/mangaStatus';
 import Readmore from '../../components/Readmore';
-import Chapter from '../../components/Chapter';
 import Tag from '../../components/Tag';
-import Pagination from '../../components/Pagination';
 import ChapterList from '../../components/ChapterList';
 
 const PREFFERED_LANG = 'en';
@@ -32,20 +30,33 @@ function Content({ manga }) {
 		() => extractMangaData(manga, PREFFERED_LANG),
 		[manga]
 	);
-	const [pageIndex, setPageIndex] = useState(0);
+	const [data, setData] = useLocalStorage('library', []);
 	const [isFavorite, setIsFavorite] = useState(false);
+	const [pageIndex, setPageIndex] = useState(0);
 	const router = useRouter();
 
+	useEffect(() => {
+		setIsFavorite(data.includes(id));
+	}, [data, id]);
+
 	const goBack = () => router.back();
-	const toggleFav = () => setIsFavorite(!isFavorite);
 	const setIndex = (index) => setPageIndex(index);
+	const toggleFav = () => {
+		if (data.includes(id)) {
+			setData(data.filter((item) => item !== id));
+			setIsFavorite(false);
+		} else {
+			setData([...data, id]);
+			setIsFavorite(true);
+		}
+	};
 
 	return (
 		<div>
 			<Head>
 				<title>{title}</title>
 			</Head>
-			<header className="flex bg-dark-01dp h-12 items-center px-2">
+			<header className="flex h-12 items-center px-2">
 				<button className="text-white" onClick={goBack}>
 					<AiOutlineArrowLeft size={32} />
 				</button>
@@ -62,13 +73,11 @@ function Content({ manga }) {
 						/>
 					</div>
 				</div>
-				<div className="relative grid-in-cover overflow-hidden pt-[calc((6/4)*100%)] rounded-sm">
+				<div className="relative grid-in-cover overflow-hidden pt-[calc((6/4)*100%)] rounded-sm h-max">
 					<Image src={coverURL} layout="fill" alt={title} />
 				</div>
 				<div className="relative grid content-center grid-in-title">
-					<h1 className="text-white break-words font-bold text-2xl line-clamp-3">
-						{title}
-					</h1>
+					<h1 className="text-white break-words font-bold text-2xl">{title}</h1>
 					<p className="text-high">{author}</p>
 					<p className="text-medium">{mangaStatus[status]}</p>
 				</div>

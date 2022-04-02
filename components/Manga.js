@@ -42,30 +42,29 @@ const Manga = React.forwardRef(({ manga }, ref) => {
 	return (
 		<Link href={`/manga/${id}`} passHref>
 			<motion.a
-				className="relative block w-full pt-[calc((6/4)*100%)] cursor-pointer"
 				ref={cardRef}
 				animate={control}
 				initial="hidden"
 				variants={cardVariant}
 			>
-				{!loaded && (
-					<div className="absolute flex items-center justify-center top-0 left-0 right-0 bottom-0">
-						<Loader />
-					</div>
-				)}
-				<Image
-					src={coverURL}
-					layout="fill"
-					alt={title}
-					objectFit="cover"
-					objectPosition="center"
-					onLoadingComplete={() => setLoaded(true)}
-				/>
-				<div className="absolute top-[90%] left-0 bottom-0 right-0 bg-gradient-to-b from-dark-02dp via-dark-01dp to-dark-00dp opacity-[85%]">
-					<h2 className="truncate text-white font-bold cursor-text" ref={ref}>
-						{title}
-					</h2>
+				<div className="relative block w-full pt-[calc((6/4)*100%)] cursor-pointer overflow-hidden rounded-lg">
+					{!loaded && (
+						<div className="absolute flex items-center justify-center top-0 left-0 right-0 bottom-0">
+							<Loader />
+						</div>
+					)}
+					<Image
+						src={coverURL}
+						layout="fill"
+						alt={title}
+						objectFit="cover"
+						objectPosition="center"
+						onLoadingComplete={() => setLoaded(true)}
+					/>
 				</div>
+				<h2 className="truncate text-white font-bold cursor-text" ref={ref}>
+					{title}
+				</h2>
 			</motion.a>
 		</Link>
 	);

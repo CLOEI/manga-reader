@@ -6,7 +6,6 @@ import useSWRInfinite from 'swr/infinite';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import Container from '../components/Container';
 import Loader from '../components/Loader';
 import Manga from '../components/Manga';
 import Emoji from '../components/Emoji';
@@ -46,29 +45,27 @@ function Discover() {
 	}, [isSearching]);
 
 	const toggleSearching = () => setIsSearching(!isSearching);
-	const goBack = () => router.back();
+	const goBack = () => router.replace('/');
 
 	if (error) {
 		console.log(error); // I let this here for now.
 	}
 
-	console.log(mangaResponse && !(mangaResponse[0].data.length > 0));
-
 	return (
-		<Container>
+		<div>
 			<Head>
 				<title>Discover</title>
 			</Head>
-			<header className="flex justify-between bg-dark-01dp h-12 items-center px-2">
+			<header className="flex justify-between h-12 items-center px-2">
 				<button className="text-white" onClick={goBack}>
 					<AiOutlineArrowLeft size={32} />
 				</button>
 				{isSearching && (
-					<form>
+					<form className="flex-1">
 						<input
 							type="text"
 							placeholder="Search"
-							className="flex-1 appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
+							className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
 							autoComplete="off"
 							name="s"
 							ref={inputRef}
@@ -79,10 +76,7 @@ function Discover() {
 					<AiOutlineSearch size={32} />
 				</button>
 			</header>
-			<main className="relative grid grid-cols-2 gap-1 px-2 my-2 flex-grow">
-				{mangaResponse && !(mangaResponse[0].data.length > 0) && (
-					<Emoji text="No data" type="err" />
-				)}
+			<main className="relative grid grid-cols-2 gap-1 px-2 mt-2 mb-20 md:grid-cols-4 lg:grid-cols-5">
 				{mangaResponse &&
 					mangaResponse
 						.reduce((acc, curr) => {
@@ -110,7 +104,10 @@ function Discover() {
 						})}
 				{isValidating && <Loader />}
 			</main>
-		</Container>
+			{mangaResponse && !(mangaResponse[0].data.length > 0) && (
+				<Emoji text="No data" type="err" />
+			)}
+		</div>
 	);
 }
 

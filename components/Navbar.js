@@ -7,7 +7,7 @@ import {
 
 import { useRouter } from 'next/router';
 
-function Navbar() {
+function Navbar({ curr }) {
 	const router = useRouter();
 	const navbar = useRef(null);
 
@@ -40,11 +40,19 @@ function Navbar() {
 	};
 
 	return (
-		<nav className="fixed bottom-0 left-0 right-0 bg-dark-02dp " ref={navbar}>
-			<ul className="flex justify-evenly items-center h-20 text-white">
+		<nav
+			className="fixed bottom-0 left-0 right-0 bg-violet-300 dark:bg-dark-01dp "
+			ref={navbar}
+		>
+			<ul className="flex justify-evenly items-center h-20 text-violet-800 dark:text-white">
 				<li className="group cursor-pointer select-none" onClick={gotoHome}>
-					<AiOutlineBook size={32} className="mx-auto group-hover:text-rose-500" />
-					<p>Home</p>
+					<AiOutlineBook
+						size={32}
+						className={`mx-auto group-hover:text-rose-500 ${
+							router.pathname === '/' && 'text-rose-500'
+						}`}
+					/>
+					<p>Library</p>
 				</li>
 				<li className="group cursor-pointer select-none" onClick={gotoDiscover}>
 					<AiOutlineCompass
@@ -56,7 +64,9 @@ function Navbar() {
 				<li className="group cursor-pointer select-none" onClick={gotoAbout}>
 					<AiOutlineEllipsis
 						size={32}
-						className="mx-auto group-hover:text-rose-500"
+						className={`mx-auto group-hover:text-rose-500  ${
+							router.pathname === '/about' && 'text-rose-500'
+						}`}
 					/>
 					<p>About</p>
 				</li>
