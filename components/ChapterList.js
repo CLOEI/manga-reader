@@ -7,7 +7,7 @@ import extractChapterData from '../utils/extractChapterData';
 
 function ChapterList({ id, pageIndex, language, setIndex }) {
 	const { data: chapterList, error } = useSWR(
-		`/api/chapter?manga=${id}&translatedLanguage[]=${language}&order[volume]=desc&order[chapter]=desc&offset=${
+		`/api/chapter?manga=${id}&translatedLanguage[]=${language}&order[volume]=desc&order[chapter]=desc&includes[]=scanlation_group&offset=${
 			pageIndex * 10
 		}`
 	);

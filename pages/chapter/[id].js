@@ -21,6 +21,7 @@ function Index({ chapter: chapterData }) {
 	const { data, error } = useSWR(`/api/at-home/server/${id}`);
 
 	if (error) {
+		// Chapter not available on mangaDex server will return an error
 		return <Error statusCode={error.status} />;
 	}
 

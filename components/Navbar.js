@@ -7,22 +7,22 @@ import {
 
 import { useRouter } from 'next/router';
 
-function Navbar({ curr }) {
+function Navbar() {
 	const router = useRouter();
 	const navbar = useRef(null);
 
 	useEffect(() => {
 		let windowHOffset = window.scrollY;
-		if (navbar) {
-			window.onscroll = () => {
+		window.onscroll = () => {
+			if (navbar.current) {
 				if (window.scrollY > windowHOffset) {
 					navbar.current.style.display = 'none';
 				} else {
 					navbar.current.style.display = 'block';
 				}
 				windowHOffset = window.scrollY;
-			};
-		}
+			}
+		};
 
 		return () => {
 			window.onscroll = null;
