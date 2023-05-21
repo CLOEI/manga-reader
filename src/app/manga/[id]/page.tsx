@@ -1,8 +1,8 @@
 import { API } from '@/utils/api'
 import Image from 'next/image'
-import Link from 'next/link'
-import { AiOutlineArrowLeft } from 'react-icons/ai'
 import Paginate from '@/components/Paginate'
+import Back from '@/components/Back'
+import { Metadata } from 'next'
 
 type Props = {
   params: {
@@ -13,21 +13,31 @@ type Props = {
   }
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const mangaData = await API.getManga(params.id);
+
+  return {
+    title: mangaData.attributes.title.en,
+  }
+}
+
 async function Page({ params, searchParams }: Props) {
   const mangaData = API.getManga(params.id);
+  const mangaStats = API.getMangaStats(params.id);
   const chaptersData = API.getChapters(params.id, searchParams?.page || 1);
-  const [ data, chapters ] = await Promise.all([mangaData, chaptersData]);
+  const [ data, stats, chapters ] = await Promise.all([mangaData, mangaStats, chaptersData]);
 
   const coverArtIndex = data.relationships.findIndex(data => data.type === "cover_art");
   const authorIndex = data.relationships.findIndex(data => data.type === "author");
   const coverArt = API.getCoverArt(params.id, data.relationships[coverArtIndex].attributes!.fileName)
 
   const totalPage = Math.ceil(chapters.total / chapters.limit);
+  const rating = stats.statistics[params.id].rating.bayesian;
 
   return (
     <main>
       <div className="navbar absolute z-10">
-        <Link href="/" className="btn btn-ghost normal-case text-xl"><AiOutlineArrowLeft/></Link>
+        <Back/>
       </div>
       <div className='h-64 relative overflow-hidden'>
         <Image src={coverArt} alt={params.id} fill style={{objectFit: "cover"}}	/>

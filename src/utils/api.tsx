@@ -94,9 +94,24 @@ type ChapterAttribute = {
   version: number
 }
 
+type MangaStats = {
+  result: string,
+  statistics: {
+    [x: string] : {
+      comments: {},
+      rating: {
+        average: number,
+        bayesian: number,
+        distribution: { [x: string]: number }
+      },
+      follows: number,
+    }
+  }
+}
+
 export class API {
-  static async getLatestUdates(limit = 32, offset = 0): Promise<MangaData> {
-    const data = await fetch(`/api/manga?includes[]=cover_art&limit=${limit}&offset=${offset}`)
+  static async getLatestUdates(limit = 32, offset = 0, title = ""): Promise<MangaData> {
+    const data = await fetch(`/api/manga?includes[]=cover_art&limit=${limit}&offset=${offset}&title=${title}`)
     return await data.json()
   }
   static getCoverArt(mangaid: string, filename: string, size = 256) {
@@ -109,6 +124,10 @@ export class API {
   }
   static async getChapters(id: string, offset: number): Promise<ChapterData> {
     const data = await fetch(`https://api.mangadex.org/manga/${id}/feed?translatedLanguage[]=en&order[volume]=desc&order[chapter]=desc&offset=${100 * (offset - 1)}`)
+    return data.json()
+  }
+  static async getMangaStats(id: string): Promise<MangaStats> {
+    const data = await fetch(`https://api.mangadex.org/statistics/manga/${id}`)
     return data.json()
   }
  }
