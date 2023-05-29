@@ -19,6 +19,11 @@ function Info() {
           <p>Updates</p>
         </div>
         <div className='mt-2 space-y-2'>
+        <div>
+            <p>Date : 30/05/2023</p>
+            <p>- Bookmark manga</p>
+            <p>- Read & view chapter</p>
+          </div>
           <div>
             <p>Date : 21/05/2023</p>
             <p>- Functional search feature</p>

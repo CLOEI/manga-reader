@@ -3,6 +3,9 @@ import Image from 'next/image'
 import Paginate from '@/components/Paginate'
 import Back from '@/components/Back'
 import { Metadata } from 'next'
+import Chapter from '@/components/Chapter'
+import { BsBookmark } from "react-icons/bs"
+import BookmarkButton from '@/components/BookmarkButton'
 
 type Props = {
   params: {
@@ -15,7 +18,6 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const mangaData = await API.getManga(params.id);
-
   return {
     title: mangaData.attributes.title.en,
   }
@@ -52,7 +54,10 @@ async function Page({ params, searchParams }: Props) {
             <h1 className='text-2xl font-bold'>{data.attributes.title.en}</h1>
             <p>Author : {data.relationships[authorIndex].attributes!.name}</p>
             <p>Status : {data.attributes.status}</p>
-            <button className='btn mt-2'>Add to library</button>
+            <div className="flex items-center space-x-1">
+              <button className='btn mt-2'>Add to library</button>
+              <BookmarkButton id={data.id}/>
+            </div>
           </div>
           <p className='col-span-6 md:col-span-5 h-max'>{data.attributes.description.en}</p>
           <div className='flex flex-wrap col-span-6 gap-1 md:col-span-5'>
@@ -64,10 +69,8 @@ async function Page({ params, searchParams }: Props) {
         <div className="divider"></div>
         <h2 className='text-xl font-bold my-2'>Chapters ({chapters.total})</h2>
         <div className='overflow-hidden'>
-          {chapters.data.map(chapter => {
-            return <button className='btn btn-outline w-full justify-start text-left mb-1' key={chapter.id}>
-              <p className=''>{chapter.attributes.volume && `v.${chapter.attributes.volume} `}{chapter.attributes.chapter && `c.${chapter.attributes.chapter} ${chapter.attributes.title ? '- ' : ''}`}{chapter.attributes.title}</p>
-            </button>
+          {(chapters.data as Chapter[]).map(chapter => {
+            return <Chapter key={chapter.id} chapter={chapter} />
           })}
         </div>
         <div className="flex justify-center py-4">

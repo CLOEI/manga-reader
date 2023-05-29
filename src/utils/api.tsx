@@ -67,17 +67,27 @@ type MangaRelationship = {
 type ChapterData = {
   result: string,
   response: string,
-  data: Chapter[],
+  data: Chapter[] | Chapter,
   limit: number,
   offset: number,
   total: number
 }
 
-type Chapter = {
+export type Chapter = {
   id: string,
   type: string,
   attributes: ChapterAttribute,
-  relationships: [],
+  relationships: ChapterRelationship[],
+}
+
+type ChapterRelationship = {
+  id: string
+  type: string,
+  attributes: {
+    availableTranslatedLanguages: string,
+    title: { [x: string]: string },
+    name: string,
+  }
 }
 
 type ChapterAttribute = {
@@ -85,7 +95,7 @@ type ChapterAttribute = {
   chapter: string,
   title: string,
   translatedLanguage: string,
-  externalUrl: {},
+  externalUrl: string,
   publishAt: Date,
   readableAt: Date,
   createdAt: Date,
@@ -117,6 +127,10 @@ export class API {
   static getCoverArt(mangaid: string, filename: string, size = 256) {
     return `https://uploads.mangadex.org/covers/${mangaid}/${filename}.${size}.jpg`;
   }
+  static async getMangasByIds(id: string[]): Promise<MangaData> {
+    const data = await fetch(`/api/manga?includes[]=cover_art&ids[]=${id.join("&ids[]=")}`)
+    return data.json()
+  }
   // Server only
   static async getManga(id: string): Promise<Manga> {
     const data = await fetch(`https://api.mangadex.org/manga/${id}?includes[]=cover_art&includes[]=author`);
@@ -126,8 +140,20 @@ export class API {
     const data = await fetch(`https://api.mangadex.org/manga/${id}/feed?translatedLanguage[]=en&order[volume]=desc&order[chapter]=desc&offset=${100 * (offset - 1)}`)
     return data.json()
   }
+  static async getChapter(id: string): Promise<ChapterData> {
+    const data = await fetch(`https://api.mangadex.org/chapter/${id}?includes[]=manga`)
+    return data.json()
+  }
   static async getMangaStats(id: string): Promise<MangaStats> {
     const data = await fetch(`https://api.mangadex.org/statistics/manga/${id}`)
     return data.json()
   }
- }
+  static async getChapterImages(chapterId: string) {
+    const chapData = await this.getChapter(chapterId);
+    const manga = (chapData.data as Chapter).relationships.filter((item) => item.type === 'manga')[0];
+    const home = await (await fetch(`https://api.mangadex.org/at-home/server/${chapterId}`)).json();
+    return {
+      manga, images: home.chapter.data.map((file: string) => `${home.baseUrl}/data/${home.chapter.hash}/${file}`)
+    }
+  }
+}
