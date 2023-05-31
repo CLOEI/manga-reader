@@ -4,7 +4,6 @@ import Paginate from '@/components/Paginate'
 import Back from '@/components/Back'
 import { Metadata } from 'next'
 import Chapter from '@/components/Chapter'
-import { BsBookmark } from "react-icons/bs"
 import BookmarkButton from '@/components/BookmarkButton'
 
 type Props = {
@@ -55,7 +54,7 @@ async function Page({ params, searchParams }: Props) {
             <p>Author : {data.relationships[authorIndex].attributes!.name}</p>
             <p>Status : {data.attributes.status}</p>
             <div className="flex items-center space-x-1">
-              <button className='btn mt-2'>Add to library</button>
+              <a className='btn mt-2' href={`https://mangadex.org/title/${params.id}`} target='_blank' rel='noreferrer'>On MangaDex</a>
               <BookmarkButton id={data.id}/>
             </div>
           </div>

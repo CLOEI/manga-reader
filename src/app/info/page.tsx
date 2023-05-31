@@ -19,7 +19,12 @@ function Info() {
           <p>Updates</p>
         </div>
         <div className='mt-2 space-y-2'>
-        <div>
+          <div>
+            <p>Date : 31/05/2023</p>
+            <p>- Fix infinite request</p>
+            <p>- Fix on pagination scroll layout re-rendered</p>
+          </div>
+          <div>
             <p>Date : 30/05/2023</p>
             <p>- Bookmark manga</p>
             <p>- Read & view chapter</p>

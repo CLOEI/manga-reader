@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 function Back() {
   const router = useRouter();
 
-  const onClick = () => router.push("/manga")
+  const onClick = () => router.back()
 
   return (
     <button className="btn btn-ghost" onClick={onClick}><AiOutlineArrowLeft/></button>
