@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  fallbacks: {
+    document: '/offline',
+  }
+})
+
+const nextConfig = withPWA({
   images: {
     domains: ['uploads.mangadex.org']
   },
@@ -11,6 +19,6 @@ const nextConfig = {
       }
     ]
   }
-}
+})
 
 module.exports = nextConfig

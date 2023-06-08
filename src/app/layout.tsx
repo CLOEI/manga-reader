@@ -2,6 +2,7 @@ import Navigation from '@/components/Navigation'
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { AiOutlineBook, AiOutlineSearch, AiOutlineInfoCircle } from "react-icons/ai"
+import { Metadata } from 'next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -11,9 +12,24 @@ const navLinks = [
   { href: "/info", icon: <AiOutlineInfoCircle/>},
 ]
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Manga',
-  description: 'Created with love',
+  description: 'View and read your favourite manga easily.',
+  applicationName: 'Manga',
+  appleWebApp: {
+    title: 'Manga',
+    capable: true,
+    statusBarStyle: 'default',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: '/icon-192x192.png',
+    shortcut: '/icon-512x512.png',
+  },
+  themeColor: 'dark',
+  manifest: '/manifest.json',
 }
 
 export default function RootLayout({

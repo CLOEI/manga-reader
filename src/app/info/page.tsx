@@ -20,6 +20,10 @@ function Info() {
         </div>
         <div className='mt-2 space-y-2'>
           <div>
+            <p>Date : 08/06/2023</p>
+            <p>- Intialize PWA</p>
+          </div>
+          <div>
             <p>Date : 31/05/2023</p>
             <p>- Fix infinite request</p>
             <p>- Fix on pagination scroll layout re-rendered</p>
