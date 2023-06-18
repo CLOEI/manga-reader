@@ -9,7 +9,7 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = withPWA({
   images: {
-    domains: ['uploads.mangadex.org']
+    domains: ['uploads.mangadex.org'],
   },
   async rewrites() {
     return [

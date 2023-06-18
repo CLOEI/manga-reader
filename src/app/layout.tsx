@@ -3,6 +3,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { AiOutlineBook, AiOutlineSearch, AiOutlineInfoCircle } from "react-icons/ai"
 import { Metadata } from 'next'
+import Provider from '@/components/Provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -38,10 +39,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {children}
-        <Navigation navLinks={navLinks}/>
+        <Provider>
+          {children}
+          <Navigation navLinks={navLinks}/>
+        </Provider>
       </body>
     </html>
   )

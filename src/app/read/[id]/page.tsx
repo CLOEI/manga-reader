@@ -27,7 +27,7 @@ async function Page({ params }: Props) {
       {images.map((file: string, i: number) => {
         return (
           <div className="relative aspect-[1/1.5]" key={i}>
-            <Image src={file} alt="" fill/>
+            <Image unoptimized src={file} alt="" fill/>
           </div>
         )
       })}
