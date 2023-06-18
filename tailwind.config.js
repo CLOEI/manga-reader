@@ -1,32 +1,18 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-	darkMode: 'class',
-	content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-	theme: {
-		gridTemplateAreas: {
-			layout: [
-				'cover title',
-				'tool tool',
-				'desc desc',
-				'tags tags',
-				'chapter chapter',
-			],
-		},
-		extend: {
-			gridTemplateColumns: {
-				layout: '7rem 1fr',
-			},
-			colors: {
-				'dark-00dp': '#121212',
-				'dark-01dp': '#232323',
-				'dark-02dp': '#262626',
-				'dark-03dp': '#292929',
-				'dark-04dp': '#2a2a2a',
-				'dark-06dp': '#303030',
-			},
-		},
-	},
-	plugins: [
-		require('@savvywombat/tailwindcss-grid-areas'),
-		require('@tailwindcss/line-clamp'),
-	],
-};
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic':
+          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
+    },
+  },
+  plugins: [require("daisyui")],
+}
