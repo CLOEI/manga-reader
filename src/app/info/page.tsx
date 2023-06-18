@@ -27,6 +27,7 @@ function Info() {
               <p>Date : 19/06/2023</p>
               <p>- Added themes selector</p>
               <p>- Markdown support</p>
+              <p>- Bypass restriction</p>
             </div>
             <div>
               <p>Date : 08/06/2023</p>
