@@ -24,6 +24,11 @@ function Info() {
           </div>
           <div className='mt-2 space-y-2'>
             <div>
+              <p>Date : 22/06/2023</p>
+              <p>- Cache header</p>
+              <p>- Limit bookmark to 100 for now</p>
+            </div>
+            <div>
               <p>Date : 19/06/2023</p>
               <p>- Added themes selector</p>
               <p>- Markdown support</p>

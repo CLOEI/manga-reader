@@ -128,7 +128,7 @@ export class API {
     return `https://uploads.mangadex.org/covers/${mangaid}/${filename}.${size}.jpg`;
   }
   static async getMangasByIds(id: string[]): Promise<MangaData> {
-    const data = await fetch(`/api/manga?includes[]=cover_art&ids[]=${id.join("&ids[]=")}`)
+    const data = await fetch(`/api/manga?includes[]=cover_art&limit=100&ids[]=${id.join("&ids[]=")}`)
     return data.json()
   }
   // Server only

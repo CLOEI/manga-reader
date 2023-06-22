@@ -19,7 +19,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const mangaData = await API.getManga(params.id);
   return {
-    title: mangaData.attributes.title.en,
+    title: mangaData.attributes.title.en || 'Unknown',
   }
 }
 
