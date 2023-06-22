@@ -11,7 +11,8 @@ export async function GET(request: Request) {
   return new Response(data, {
     status: 200,
     headers: {
-      'Content-Type': data.type
+      'Content-Type': data.type,
+      'Cache-Control': 's-maxage=86400',
     }
   })
 }

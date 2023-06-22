@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const mangaData = await API.getChapter(params.id!);
   const { title, mangaTitle } = extractChapterData(mangaData.data as Chapter);
   return {
-    title: title || mangaTitle,
+    title: title || mangaTitle || 'Unknown',
   }
 }
 
