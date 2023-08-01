@@ -31,7 +31,8 @@ async function Page({ params, searchParams }: Props) {
 
   const coverArtIndex = data.relationships.findIndex(data => data.type === "cover_art");
   const authorIndex = data.relationships.findIndex(data => data.type === "author");
-  const coverArt = `/api?url=${encodeURIComponent(API.getCoverArt(data.id, data.relationships[coverArtIndex].attributes!.fileName))}`
+  const coverURL = API.getCoverArt(data.id, data.relationships[coverArtIndex]?.attributes?.fileName ?? null)
+  const coverArt = coverURL ? `/api?url=${encodeURIComponent(coverURL)}` : ''
 
   const totalPage = Math.ceil(chapters.total / chapters.limit);
   const rating = stats.statistics[params.id].rating.bayesian;
